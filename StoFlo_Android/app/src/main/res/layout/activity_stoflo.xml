@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+
+              android:weightSum="1" android:background="@drawable/main_background" android:gravity="center">
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+    >
+        <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_nickname"
+                        android:textStyle="italic"
+                        android:textSize="20dp"
+                        android:layout_gravity="center"
+                        android:alpha="0.8"
+                        android:textColor="#ffffff"/>
+        <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|right"
+                android:layout_weight="1"
+        >
+                <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:alpha="0.7"
+                        android:id="@+id/status_username"
+                        android:textColor="#ffffff"
+                        android:foregroundGravity="center_vertical"
+                />
+        </android.support.design.widget.TextInputLayout>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:text="@string/logout"
+                android:singleLine="true"
+                android:id="@+id/logout_button"
+        />
+    </LinearLayout>
+
+
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
+                  android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
+                  android:id="@+id/linearLayout" android:background="#ffffff" android:alpha="0.6"
+                  android:layout_margin="30dp">
+        <TextView style="@style/Base.TextAppearance.AppCompat.Large" android:layout_width="match_parent"
+                  android:layout_height="wrap_content" android:text="@string/info_game_store" android:gravity="center"/>
+        <ListView android:layout_width="match_parent" android:layout_height="300dp"
+                  android:id="@+id/GAME_LIST_VIEW" android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="bottom">
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_weight="1"
+                    android:text="@string/create_new_game"
+                    android:id="@+id/create_new_game"
+                    android:layout_gravity="bottom"/>
+            <Button
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/info_continue_last"
+                    android:id="@+id/continue_last_button"
+                    android:layout_gravity="center"/>
+    </LinearLayout>
+
+
+
+</LinearLayout>

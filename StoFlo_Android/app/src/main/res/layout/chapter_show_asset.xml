@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TextView
+            style="@style/Base.TextAppearance.AppCompat.Large"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|left"
+            android:minLines="5"
+            android:background="@color/fuck"
+            android:textColor="@color/white"
+            android:shadowRadius="5"
+            android:shadowColor="@color/colorPrimaryDark"
+            android:id="@+id/chapter_content_show"
+            android:clickable="true"
+            android:maxLines="20"
+    />
+    <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+    >
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/chapter_next_container"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:foregroundGravity="center"
+                android:layout_gravity="center"
+        >
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+</LinearLayout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="300dp"
+            android:hint="@string/hint_game_name"
+            android:singleLine="true"
+            android:id="@+id/create_game_name"
+    />
+    <!--<android.support.design.widget.TextInputEditText-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+    <!--&gt;-->
+    <!--</android.support.design.widget.TextInputEditText>-->
+    <EditText
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="300dp"
+            android:minLines="3"
+            android:hint="@string/hint_game_description"
+            android:gravity="top|left"
+            android:id="@+id/create_game_description"
+    />
+    <!--<android.support.design.widget.TextInputEditText-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content">-->
+    <!--</android.support.design.widget.TextInputEditText>-->
+
+</LinearLayout>
