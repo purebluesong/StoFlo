@@ -1,4 +1,6 @@
 import React from 'react'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import Login from '../common/Login'
 
 class Create extends React.Component {
     constructor(props, context) {
@@ -9,9 +11,9 @@ class Create extends React.Component {
 
     render() {
         return (
-            <div>
-                Hello Fucker!
-            </div>
+            <MuiThemeProvider>
+                <Login onFinished={x=>alert(x)} />
+            </MuiThemeProvider>
         )
     }
 }

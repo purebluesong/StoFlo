@@ -6,9 +6,9 @@ const rel = x => path.resolve(__dirname, x[0])
 
 const config = {
   entry: {
-    profile: ['babel-polyfill', rel`profile/entry.js`],
-    play:    ['babel-polyfill', rel`play/entry.js`],
-    create:  ['babel-polyfill', rel`create/entry.js`]
+    profile: rel`profile/entry.js`,
+    play:    rel`play/entry.js`,
+    create:  rel`create/entry.js`
   },
   resolve: {
     extensions: ['', '.js'],
@@ -31,7 +31,7 @@ const config = {
         loader: 'babel',
         exclude: ['node_modules'],
         query: {
-          presets: ['es2015', 'react', 'stage-3']
+          presets: ['es2015', 'react']
         }
       }
     ]
