@@ -2,23 +2,26 @@ const webpack = require('webpack')
 const path = require('path')
 const TransferWebpackPlugin = require('transfer-webpack-plugin')
 
+const rel = x => path.resolve(__dirname, x[0])
+
 const config = {
-  entry: [path.join(__dirname, 'app/app.js')],
+  entry: {
+    profile: ['babel-polyfill', rel`profile/entry.js`],
+    play:    ['babel-polyfill', rel`play/entry.js`],
+    create:  ['babel-polyfill', rel`create/entry.js`]
+  },
   resolve: {
-    extensions: ["", ".js"],
-    node_modules: ["node_modules"]
+    extensions: ['', '.js'],
+    node_modules: ['node_modules']
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'app.js'
+    path: 'build',
+    filename: '[name].js'
   },
   plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: { warnings: false }
-    }),
     new webpack.NoErrorsPlugin(),
     new TransferWebpackPlugin([
-      {from: 'www'}
+      {from: 'assets'}
     ], __dirname)
   ],
   module: {
@@ -26,9 +29,9 @@ const config = {
       {
         test: /\.js$/,
         loader: 'babel',
-        exclude: [path.resolve(__dirname, 'node_modules')],
+        exclude: ['node_modules'],
         query: {
-          "presets": ["es2015", "react"]
+          presets: ['es2015', 'react', 'stage-3']
         }
       }
     ]

@@ -1,7 +1,6 @@
 import React from 'react'
-import {stop} from './utils.js'
 
-class Main extends React.Component {
+class Create extends React.Component {
     constructor(props, context) {
         super(props, context)
 
@@ -17,4 +16,4 @@ class Main extends React.Component {
     }
 }
 
-export default Main
+export default Create
