@@ -1,2 +1,2 @@
-export const isemail = x => /^[A-Za-zd]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/.test(x)
-export const ispassowrd = x => x.length >= 8 && /\d/.test(x) && /[a-zA-Z]/.test(x)
+export const isemail = x => /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i.test(x)
+export const ispassword = x => x.length >= 8 && /\d/.test(x) && /[a-zA-Z]/.test(x)

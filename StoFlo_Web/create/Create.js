@@ -7,12 +7,14 @@ class Create extends React.Component {
         super(props, context)
 
         this.state = {}
+
+
     }
 
     render() {
         return (
             <MuiThemeProvider>
-                <Login onFinished={x=>alert(x)} />
+                <Login onFinished={x=>alert(JSON.stringify(x))} />
             </MuiThemeProvider>
         )
     }

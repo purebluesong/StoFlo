@@ -31,7 +31,11 @@ const config = {
         loader: 'babel',
         exclude: ['node_modules'],
         query: {
-          presets: ['es2015', 'react']
+          presets: ['es2015', 'react'],
+          plugins: [
+            'transform-class-properties',
+            'transform-function-bind'
+          ]
         }
       }
     ]

@@ -1,24 +1,23 @@
 import React from 'react'
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
-import {isemail} from '../common/util'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
+import TextField from 'material-ui/TextField'
+import {isemail, ispassword} from '../common/util'
 
-class Login extends React.Component {
+export default class Login extends React.Component {
+    static propTypes = {onFinished: React.PropTypes.func.isRequired}
+
+    state = {
+        finished: false,
+        emailError: '',
+        passwordError: ''
+    }
+
     constructor(props, context) {
         super(props, context)
+    }
 
-        this.state = {
-            finished: false,
-            emailError: '',
-            passwordError: ''
-        }
-
-        this.checkFormat = this.checkFormat.bind(this)
-        this.onSignUp    = this.onSignUp.bind(this)
-        this.onLogIn     = this.onLogIn.bind(this)
-        this.finish      = this.finish.bind(this)
-
+    componentDidMount() {
         this.checkCachedUser()
     }
 
@@ -28,11 +27,11 @@ class Login extends React.Component {
     }
 
     checkFormat() {
-        const email    = isemail(this.refs.email.value)
-        const password = ispassword(this.refs.password.value)
+        const email    = isemail(this.refs.email.getValue())
+        const password = ispassword(this.refs.password.getValue())
 
-        email    || this.setState({emailError: "malformed email"})
-        password || this.setState({passwordError: "malformed password"})
+        email    || this.setState({emailError: "invalid email format"})
+        password || this.setState({passwordError: "atleast 8 chars, with number and letter"})
 
         return email && password
     }
@@ -41,14 +40,15 @@ class Login extends React.Component {
         if (!this.checkFormat()) return
 
         const user = new AV.User()
-        user.setEmail(this.refs.email.value)
-        user.setPassword(this.refs.password.value)
+        user.setEmail(this.refs.email.getValue())
+        user.setUsername(this.refs.email.getValue())
+        user.setPassword(this.refs.password.getValue())
 
         user.signUp().try(this.finish).catch(e => {
             if (e.code == 203) {
                 return this.setState({emailError: "Email already taken"})
             } else {
-                return alert(e)
+                return alert(JSON.stringify(e))
             }
         })
     }
@@ -56,10 +56,10 @@ class Login extends React.Component {
     onLogIn() {
         if (!this.checkFormat()) return
 
-        const email    = this.refs.email.value
+        const username = this.refs.email.value
         const password = this.refs.password.value
 
-        AV.User.logIn(email, password).try(this.finish).catch(e => {
+        AV.User.logIn(username, password).try(this.finish).catch(e => {
             switch (e.code) {
                 case 210:
                     return this.setState({passwordError: "Wrong password"})
@@ -68,7 +68,7 @@ class Login extends React.Component {
                 case 216:
                     return this.setState({emailError: "Email isn't verified"})
                 default:
-                    return alert(e)
+                    return alert(JSON.stringify(e))
             }
         })
     }
@@ -83,12 +83,12 @@ class Login extends React.Component {
             <FlatButton
                 label="Sign up"
                 secondary={true}
-                onTouchTap={this.onSignUp}
+                onTouchTap={::this.onSignUp}
             />,
             <FlatButton
                 label="Log in"
                 primary={true}
-                onTouchTap={this.onLogIn}
+                onTouchTap={::this.onLogIn}
             />
         ]
 
@@ -105,7 +105,7 @@ class Login extends React.Component {
                     type="email"
                     errorText={this.state.emailError}
                     onFocus={()=>this.setState({emailError:''})}
-                    onBlur={this.checkFormat}
+                    onBlur={::this.checkFormat}
                     ref="email"
                 />
                 <br />
@@ -115,12 +115,10 @@ class Login extends React.Component {
                     type="password"
                     errorText={this.state.passwordError}
                     onFocus={()=>this.setState({passwordError:''})}
-                    onBlur={this.checkFormat}
+                    onBlur={::this.checkFormat}
                     ref="password"
                 />
             </Dialog>
         )
     }
 }
-
-export default Login
