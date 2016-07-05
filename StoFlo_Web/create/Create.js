@@ -1,23 +1,31 @@
 import React from 'react'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Login from '../common/Login'
+import GameChooser from './GameChooser'
 
-class Create extends React.Component {
-    constructor(props, context) {
-        super(props, context)
+export default class Create extends React.Component {
+    state = {
+        gameId: '',
 
-        this.state = {}
-
-
+        isChoosingGame: false
     }
 
-    render() {
-        return (
-            <MuiThemeProvider>
-                <Login onFinished={x=>alert(JSON.stringify(x))} />
-            </MuiThemeProvider>
-        )
+    onLoginFinished = (user) => {
+        this.setState({isChoosingGame: true})
     }
+
+    onChooseGameFinished = (game) => {
+        this.setState({isChoosingGame: false})
+    }
+
+    render = () => (
+        <MuiThemeProvider><div>
+            <Login onFinished={this.onLoginFinished} />
+            <GameChooser
+                open={this.state.isChoosingGame}
+                onFinished={this.onChooseGameFinished}
+            />
+        </div></MuiThemeProvider>
+    )
 }
 
-export default Create

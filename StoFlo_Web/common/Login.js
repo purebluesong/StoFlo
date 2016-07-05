@@ -13,20 +13,16 @@ export default class Login extends React.Component {
         passwordError: ''
     }
 
-    constructor(props, context) {
-        super(props, context)
-    }
-
-    componentDidMount() {
+    componentWillMount = () => {
         this.checkCachedUser()
     }
 
-    checkCachedUser() {
+    checkCachedUser = () => {
         const currentUser = AV.User.current()
         currentUser && this.finish(currentUser)
     }
 
-    checkFormat() {
+    checkFormat = () => {
         const email    = isemail(this.refs.email.getValue())
         const password = ispassword(this.refs.password.getValue())
 
@@ -36,7 +32,7 @@ export default class Login extends React.Component {
         return email && password
     }
 
-    onSignUp() {
+    onSignUp = () => {
         if (!this.checkFormat()) return
 
         const user = new AV.User()
@@ -53,7 +49,7 @@ export default class Login extends React.Component {
         })
     }
 
-    onLogIn() {
+    onLogIn = () => {
         if (!this.checkFormat()) return
 
         const username = this.refs.email.value
@@ -73,52 +69,50 @@ export default class Login extends React.Component {
         })
     }
 
-    finish(user) {
+    finish = (user) => {
         this.setState({finished: true})
         this.props.onFinished(user)
     }
 
-    render() {
-        const actions = [
-            <FlatButton
-                label="Sign up"
-                secondary={true}
-                onTouchTap={::this.onSignUp}
-            />,
-            <FlatButton
-                label="Log in"
-                primary={true}
-                onTouchTap={::this.onLogIn}
-            />
-        ]
+    actions = [
+        <FlatButton
+            label="Sign up"
+            secondary={true}
+            onTouchTap={this.onSignUp}
+        />,
+        <FlatButton
+            label="Log in"
+            primary={true}
+            onTouchTap={this.onLogIn}
+        />
+    ]
 
-        return (
-            <Dialog
-                title="Login"
-                actions={actions}
-                modal={true}
-                open={!this.state.finished}
-            >
-                <TextField
-                    hintText="example@hit.edu.cn"
-                    floatingLabelText="Email:"
-                    type="email"
-                    errorText={this.state.emailError}
-                    onFocus={()=>this.setState({emailError:''})}
-                    onBlur={::this.checkFormat}
-                    ref="email"
-                />
-                <br />
-                <TextField
-                    hintText="********"
-                    floatingLabelText="Password:"
-                    type="password"
-                    errorText={this.state.passwordError}
-                    onFocus={()=>this.setState({passwordError:''})}
-                    onBlur={::this.checkFormat}
-                    ref="password"
-                />
-            </Dialog>
-        )
-    }
+    render = () => (
+        <Dialog
+            title="Login"
+            actions={this.actions}
+            modal={true}
+            open={!this.state.finished}
+        >
+            <TextField
+                hintText="example@hit.edu.cn"
+                floatingLabelText="Email:"
+                type="email"
+                errorText={this.state.emailError}
+                onFocus={()=>this.setState({emailError:''})}
+                onBlur={this.checkFormat}
+                ref="email"
+            />
+            <br />
+            <TextField
+                hintText="********"
+                floatingLabelText="Password:"
+                type="password"
+                errorText={this.state.passwordError}
+                onFocus={()=>this.setState({passwordError:''})}
+                onBlur={this.checkFormat}
+                ref="password"
+            />
+        </Dialog>
+    )
 }
