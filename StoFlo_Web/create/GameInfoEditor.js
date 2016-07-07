@@ -54,6 +54,7 @@ export default class GameInfoEditor extends React.Component {
                 defaultValue={this.state.game.get("name")||''}
                 floatingLabelText="Game Title"
             />
+            <br />
             <TextField
                 ref="description"
                 defaultValue={this.state.game.get("description")||''}
