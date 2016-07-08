@@ -52,8 +52,8 @@ export default class Login extends React.Component {
     onLogIn = () => {
         if (!this.checkFormat()) return
 
-        const username = this.refs.email.value
-        const password = this.refs.password.value
+        const username = this.refs.email.getValue()
+        const password = this.refs.password.getValue()
 
         AV.User.logIn(username, password).try(this.finish).catch(e => {
             switch (e.code) {
