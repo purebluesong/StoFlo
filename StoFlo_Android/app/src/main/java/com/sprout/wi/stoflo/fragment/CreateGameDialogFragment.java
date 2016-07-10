@@ -1,18 +1,16 @@
 package com.sprout.wi.stoflo.fragment;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import com.sprout.wi.stoflo.R;
-import com.sprout.wi.stoflo.StoFloActivity;
+import com.sprout.wi.stoflo.Activity.StoFloActivity;
 
 /**
  * Created by purebluesong on 2016/6/30.

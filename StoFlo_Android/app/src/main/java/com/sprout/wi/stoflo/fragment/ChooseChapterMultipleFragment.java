@@ -18,9 +18,9 @@ public class ChooseChapterMultipleFragment extends DialogFragment {
 
     String[] items;
     public interface ChooseMultipleListener {
-        public void onItemClick(DialogInterface dialog, int which, boolean isChecked);
-        public void onPositiveClick(DialogInterface dialog, int which);
-        public void onNegativeClick(DialogInterface dialog, int which);
+        void onItemClick(DialogInterface dialog, int which, boolean isChecked);
+        void onPositiveClick(DialogInterface dialog, int which);
+        void onNegativeClick(DialogInterface dialog, int which);
     }
 
     ChooseMultipleListener mCML;

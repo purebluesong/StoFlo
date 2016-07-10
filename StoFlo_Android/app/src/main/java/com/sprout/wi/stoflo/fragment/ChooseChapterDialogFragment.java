@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * Created by purebluesong on 2016/7/2.
  */
@@ -19,9 +20,9 @@ public class ChooseChapterDialogFragment extends DialogFragment{
     String[] items;
 
     public interface ChooseSingleListener{
-        public void onItemClick(DialogInterface dialog, int which);
-        public void onPositiveClick(DialogInterface dialog, int which);
-        public void onNegativeClick(DialogInterface dialog, int which);
+        void onItemClick(DialogInterface dialog, int which);
+        void onPositiveClick(DialogInterface dialog, int which);
+        void onNegativeClick(DialogInterface dialog, int which);
     }
 
     ChooseSingleListener mCSL;

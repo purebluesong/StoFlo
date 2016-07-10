@@ -7,7 +7,7 @@
               android:paddingLeft="@dimen/activity_horizontal_margin"
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
-              tools:context="com.sprout.wi.stoflo.LoginActivity" android:background="@drawable/login_background"
+              tools:context=".Activity.LoginActivity" android:background="@drawable/login_background"
               android:gravity="center">
 
     <!-- Login progress -->
