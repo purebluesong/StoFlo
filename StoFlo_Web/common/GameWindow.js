@@ -32,7 +32,7 @@ export default class GameWindow extends React.Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if (nextProps.chapter == this.props.chapter) return console.warn("not update")
+        if (nextProps.chapter == this.props.chapter) return // console.warn("not update")
         const content   = nextProps.chapter.get('content')
         const variables = nextProps.variables
         this.setState({
