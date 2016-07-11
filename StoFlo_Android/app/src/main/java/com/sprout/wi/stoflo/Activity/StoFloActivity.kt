@@ -86,8 +86,10 @@ class StoFloActivity : Activity() {
     }
 
 
-    private fun startGame(game: AVObject) {
-        jumpToGamePage(game.objectId, game.getAVObject<AVObject>(getString(R.string.info_table_start_chapter)).objectId)
+    private fun startGame(game: AVObject?) {
+        if (game != null) {
+            jumpToGamePage(game.objectId, game?.getAVObject<AVObject>(getString(R.string.info_table_start_chapter)).objectId)
+        }
     }
 
     private fun logout() {
@@ -116,10 +118,11 @@ class StoFloActivity : Activity() {
         mGameListView = findViewById(R.id.GAME_LIST_VIEW) as ListView
 
         mCreateNewGameButton!!.setOnClickListener { jumpToCreatePage() }
-//        mContinueLastGameButton!!.setOnClickListener { //                jumpToGamePage(0,0); }
         mLogoutButton!!.setOnClickListener { logout() }
 
         mGameListView!!.choiceMode = ListView.CHOICE_MODE_SINGLE
-//        mGameListView!!.onItemClickListener = { OnItemClickListener{ parent, view, i, l -> Unit } }
+        mGameListView!!.onItemClickListener = OnItemClickListener{
+            parent, view, position, id -> startGame(mGameList?.get(position))
+        }
     }
 }
