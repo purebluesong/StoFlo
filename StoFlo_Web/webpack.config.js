@@ -12,7 +12,8 @@ const babelConfig = {
     presets: ['es2015', 'react'],
     plugins: [
         'transform-class-properties',
-        'transform-function-bind'
+        'transform-function-bind',
+        'transform-object-rest-spread'
     ]
 }
 
