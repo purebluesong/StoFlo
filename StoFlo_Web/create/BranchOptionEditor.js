@@ -5,15 +5,22 @@ import TextField from 'material-ui/TextField'
 import FlatButton from 'material-ui/FlatButton'
 import {List, ListItem} from 'material-ui/List'
 import {alert} from "../common/util"
-import * from "../common/ActionAST"
+import ActionAST from "../common/ActionAST"
 
 export default class BranchOptionEditor extends React.Component {
     static propTypes = {
-        entry: React.PropTypes.any.isRequired
+        entry: React.PropTypes.any.isRequired,
+        actions: React.PropTypes.any.isRequired
     }
 
     state = {
+        ast: null
+    }
 
+    componentWillMount() {
+        this.setState({
+            ast: ActionAST.fromAction(this.props.entry, this.props.actions)
+        })
     }
 
     render = () => (

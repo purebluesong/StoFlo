@@ -7,7 +7,7 @@ export const AVModel = (() => {
 })()
 
 export const getChapters = function() {
-    const tableName ='Chapter' + this.getObjectId()
+    const tableName ='Chapter_' + this.getObjectId()
     const chapters = (new AV.Query(tableName)).find()
     if (chapters) {
         return chapters
