@@ -70,4 +70,5 @@
     <string name="error_save_background_failed">保存背景图片至服务器失败</string>
     <string name="info_my_game">我的世界</string>
     <string name="info_game_add_new">创建新游戏</string>
+    <string name="info_table_user_have_game">have_games</string>
 </resources>

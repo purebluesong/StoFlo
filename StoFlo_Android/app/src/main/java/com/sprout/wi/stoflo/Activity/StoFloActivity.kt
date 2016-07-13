@@ -13,9 +13,9 @@ import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.AVQuery
 import com.avos.avoscloud.AVUser
-import com.sprout.wi.stoflo.R
-import com.sprout.wi.stoflo.component.GlideImageLoader
 
+import com.sprout.wi.stoflo.component.GlideImageLoader
+import com.sprout.wi.stoflo.R
 import java.util.ArrayList
 
 /**
@@ -88,7 +88,7 @@ class StoFloActivity : Activity() {
 
     private fun startGame(game: AVObject?) {
         if (game != null) {
-            jumpToGamePage(game.objectId, game?.getAVObject<AVObject>(getString(R.string.info_table_start_chapter)).objectId)
+            jumpToGamePage(game.objectId, game.getAVObject<AVObject>(getString(R.string.info_table_start_chapter)).objectId)
         }
     }
 

@@ -71,7 +71,7 @@
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     android:layout_weight="1"
                     android:text="@string/create_new_game"
-                    android:id="@+id/create_new_game"
+                    android:id="@+id/myself_game"
                     android:layout_gravity="bottom"/>
             <Button
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"

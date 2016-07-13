@@ -23,10 +23,10 @@ import com.sprout.wi.stoflo.Activity.CreateStoryActivity
 import com.sprout.wi.stoflo.Activity.StoFloActivity
 import com.sprout.wi.stoflo.Activity.createInter
 import com.sprout.wi.stoflo.Global
-import com.sprout.wi.stoflo.R
 import com.sprout.wi.stoflo.fragment.ChooseChapterDialogFragment
 import com.sprout.wi.stoflo.fragment.ChooseChapterMultipleFragment
 import com.sprout.wi.stoflo.fragment.CreateGameDialogFragment
+import com.sprout.wi.stoflo.R
 import org.jetbrains.anko.find
 import java.util.*
 
@@ -35,7 +35,6 @@ import java.util.*
  */
 class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     private var mChapterNameEdit: EditText? = null
-
     private var mChapterContentEdit: EditText? = null
     private var mChapterName: Button? = null
     private var mChapterContentBackground: Button? = null
@@ -49,7 +48,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     private var mGame: AVObject? = null
     private var mNextChapters: List<AVObject>? = null
     private var mBackground: Drawable? = null
-    private var context: CreateStoryActivity? = null;
+    private var context: CreateStoryActivity? = null
 
     init {
         context = createStoryActivity
@@ -75,7 +74,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         throw UnsupportedOperationException()
     }
 
-    override fun haveFlage(): Boolean {
+    override fun haveFlag(): Boolean {
         throw UnsupportedOperationException()
     }
 
@@ -103,20 +102,12 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     private fun initData() {
         val user = AVUser.getCurrentUser()
         mBackground = null
-        startNewThread(Runnable {
-            try {
-                mNextChapters = AVUser.getCurrentUser().getRelation<AVObject>(getString(R.string.info_table_chapter_nexts)).query.find()
-            } catch (e: AVException) {
-                e.printStackTrace()
-            }
-        })
-
+        Thread(Runnable {
+            mNextChapters = AVUser.getCurrentUser()
+                    .getRelation<AVObject>(getString(R.string.info_table_chapter_nexts))
+                    .query.find()
+        }).start()
         mChapter = user.getAVObject<AVObject>(getString(R.string.info_self_game_current_edit))
-    }
-
-    private fun startNewThread(runnable: Runnable) {
-        val thread = Thread(runnable)
-        thread.start()
     }
 
     private fun fillContentWith(chapter: AVObject) {
@@ -169,11 +160,6 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         button.layoutParams = layoutparams
         button.minimumWidth = 200
         mNextChaptersContainer!!.addView(button)
-    }
-
-    private fun showCreateGameDialog() {
-        val dialog = CreateGameDialogFragment()
-        dialog.show(fragmentManager, "CreateGameDialogFragment")
     }
 
     private fun initView() {
@@ -230,7 +216,6 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         clearPage()
         jumpTo(StoFloActivity::class.java)
     }
-
 
     private fun attemptSave(): Boolean {
         var cancel = false
@@ -289,53 +274,6 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
             return success
         }
 
-    override fun onDialogPositiveClick(dialog: DialogFragment) {
-        val nameEdit = (dialog as CreateGameDialogFragment).findViewById(R.id.create_game_name) as EditText
-        val gameName = nameEdit.text.toString()
-        val description = (dialog.findViewById(R.id.create_game_description) as EditText).text.toString()
-        var cancel = false
-
-        if (gameName.length == 0) {
-            nameEdit.error = getString(R.string.error_invalid_game_name)
-            cancel = true
-        }
-
-        if (!cancel) {
-            val game = AVObject(getString(R.string.info_table_game))
-            val chapterTable = getString(R.string.info_game_prefix) + gameName.hashCode()
-            game.put(getString(R.string.info_table_game_name), gameName)
-            game.put(getString(R.string.info_table_game_description), description)
-            game.put(getString(R.string.info_table_chapter_table_name), chapterTable)
-            val startChapter = createStartChapterSilence(chapterTable)
-            if (startChapter != null) {
-                game.put(getString(R.string.info_table_start_chapter), startChapter)
-            }
-            game.saveInBackground(object : SaveCallback() {
-                override fun done(e: AVException) {
-                    Toast.makeText(applicationContext, R.string.success_create_game, Toast.LENGTH_SHORT)
-                }
-            })
-            mGame = game
-            val user = AVUser.getCurrentUser()
-            user.put(getString(R.string.info_table_owner_game), game.objectId)
-            user.put(getString(R.string.info_table_current_edit), startChapter)
-            user.saveInBackground()
-        } else {
-            Toast.makeText(this, R.string.error_create_game_failed, Toast.LENGTH_LONG)
-        }
-    }
-
-    private fun createStartChapterSilence(chapterTable: String): AVObject? {
-        val chapter: AVObject
-        try {
-            chapter = saveChapter(chapterTable, getString(R.string.info_chapter_start_name), "", null,null)
-        } catch (e: AVException) {
-            e.printStackTrace()
-            return null
-        }
-
-        return chapter
-    }
 
     @Throws(AVException::class)
     private fun saveChapter(chapterTable: String, title: String, content: String, background: ByteArray?, callback: SaveCallback?, nextChapters: List<AVObject> = ArrayList()): AVObject {
@@ -350,6 +288,30 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         saveBackgroundFile(background)
         return chapter
     }
+
+    private fun createStartChapterSilence(chapterTable: String): AVObject? {
+        val startChapter = createStartChapterSilence(chapterTable)
+        if (startChapter != null) {
+            game.put(getString(R.string.info_table_start_chapter), startChapter)
+        }
+        game.saveInBackground(object : SaveCallback() {
+            override fun done(e: AVException) {
+                Toast.makeText(context?.applicationContext, R.string.success_create_game, Toast.LENGTH_SHORT)
+            }
+        })
+        user.put(getString(R.string.info_table_current_edit), startChapter)
+
+        val chapter: AVObject
+        try {
+            chapter = saveChapter(chapterTable, getString(R.string.info_chapter_start_name), "", null,null)
+        } catch (e: AVException) {
+            e.printStackTrace()
+            return null
+        }
+
+        return chapter
+    }
+
 
     private fun saveBackgroundFile(background: ByteArray?) {
         if (background != null) {

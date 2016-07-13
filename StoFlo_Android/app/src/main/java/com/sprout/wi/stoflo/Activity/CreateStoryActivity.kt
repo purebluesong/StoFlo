@@ -4,49 +4,54 @@ import android.app.Activity
 import android.content.Intent
 import android.os.*
 import android.view.View
+import android.widget.Toast
 import com.avos.avoscloud.*
 import com.sprout.wi.stoflo.Global
 import com.sprout.wi.stoflo.views.CreateAction
 import com.sprout.wi.stoflo.views.CreateChapter
 import com.sprout.wi.stoflo.views.CreateList
+import java.util.*
 
 /**
  * Created by purebluesong on 2016/6/24.
  */
 class CreateStoryActivity : Activity(){
 
-    private var mGameList: CreateList? = null;
-    private var mChapterCreate: CreateChapter? = null;
-    private var mActionCreate: CreateAction? = null;
+    private var mGameList: CreateList? = null
+    private var mChapterCreate: CreateChapter? = null
+    private var mActionCreate: CreateAction? = null
 
-    private var mCurrent: createInter? = null;
+    private var mCurrent: createInter? = null
+    private val views = listOf(mGameList,mChapterCreate,mActionCreate)
 
+    var mGame: AVObject? = null
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         if (AVUser.getCurrentUser() == null) {
             jumpTo(LoginActivity::class.java)
         }
+        super.onCreate(savedInstanceState)
         loadContentView()
-        mCurrent = getCurrent()
-        setContentView(mCurrent?.getRootView())
+        loadView()
     }
 
     private fun getCurrent(): createInter {
-        if (mGameList?.haveFlage()!!) {
-            return mGameList!!
-        } else if (mChapterCreate?.haveFlage()!!) {
-            return  mChapterCreate!!
-        } else if (mActionCreate?.haveFlage()!!) {
-            return mActionCreate!!
-        } else return mGameList!!
+        for (view in views){
+            if (view?.haveFlag()!!) {
+                return view as createInter
+            }
+        }
+        return views[0] as createInter
     }
 
-    fun reloadView() {
+    fun loadView() {
         mCurrent = getCurrent()
         setContentView(mCurrent?.getRootView())
         mCurrent?.iniData()
         mCurrent?.iniView()
+    }
 
+    fun reLoadView() {
+        loadView()
     }
 
     private fun loadContentView() {
@@ -80,11 +85,15 @@ class CreateStoryActivity : Activity(){
         finish()
     }
 
+    fun Activity.toast(msg:String,time:Int = Toast.LENGTH_LONG) {
+        Toast.makeText(this,msg,time)
+    }
+
 }
 
 interface createInter :Global.standardAvtivityInterface{
     fun iniData()
     fun iniView()
-    fun getRootView():View
-    fun haveFlage():Boolean
+    fun getRootView(): View?
+    fun haveFlag():Boolean
 }
