@@ -28,14 +28,24 @@ class CreateStoryActivity : Activity(){
         }
         loadContentView()
         mCurrent = getCurrent()
-        setContentView(getCurrentView())
+        setContentView(mCurrent?.getRootView())
     }
 
-    private fun getCurrentView(): View? {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private fun getCurrent(): createInter {
+        if (mGameList?.haveFlage()!!) {
+            return mGameList!!
+        } else if (mChapterCreate?.haveFlage()!!) {
+            return  mChapterCreate!!
+        } else if (mActionCreate?.haveFlage()!!) {
+            return mActionCreate!!
+        } else return mGameList!!
     }
 
-    private fun getCurrent(): Global.standardAvtivityInterface? {
+    fun reloadView() {
+        mCurrent = getCurrent()
+        setContentView(mCurrent?.getRootView())
+        mCurrent?.iniData()
+        mCurrent?.iniView()
 
     }
 
@@ -73,5 +83,8 @@ class CreateStoryActivity : Activity(){
 }
 
 interface createInter :Global.standardAvtivityInterface{
-
+    fun iniData()
+    fun iniView()
+    fun getRootView():View
+    fun haveFlage():Boolean
 }
