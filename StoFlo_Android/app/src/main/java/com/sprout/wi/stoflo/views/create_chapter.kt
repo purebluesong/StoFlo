@@ -9,6 +9,8 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Handler
+import android.os.Message
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -45,25 +47,46 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     private var mSaveNext: Button? = null
     private var mNextChaptersContainer: HorizontalScrollView? = null
     private var mChapter: AVObject? = null
-    private var mGame: AVObject? = null
     private var mNextChapters: List<AVObject>? = null
     private var mBackground: Drawable? = null
     private var context: CreateStoryActivity? = null
+    private var chapterTableName = ""
+    private var chapterTableQuery: AVQuery<AVObject>? = null
 
     init {
         context = createStoryActivity
     }
+
+    internal val handler: Handler = object : Handler(){
+        override fun handleMessage(msg: Message?) {
+            (msg?.obj as Runnable).run()
+            super.handleMessage(msg)
+        }
+    }
+
 
     private fun getString(resid: Int): String? {
         return context?.getString(resid)
     }
 
     private fun findViewById(resid : Int): View? {
-        return context?.find(resid)
+        return context?.findViewById(resid)
     }
 
     override fun iniData() {
-        throw UnsupportedOperationException()
+        if (context?.mGame == null) {
+            context?.reLoadView()
+        } else {
+            chapterTableName = context?.mGame!!.getString(getString(R.string.info_table_game_chapter_table_name))
+            chapterTableQuery = AVQuery<AVObject>(chapterTableName)
+            chapterTableQuery
+        }
+        Thread(Runnable {
+            mNextChapters = AVUser.getCurrentUser()
+                    .getRelation<AVObject>(getString(R.string.info_table_chapter_nexts))
+                    .query.find()
+        }).start()
+        mChapter =
     }
 
     override fun iniView() {
@@ -91,23 +114,10 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     }
 
     override fun onStart() {
-        if (mGame != null) {
-            initData()
-            initView()
-            fillContentWith(mChapter as AVObject)
-            registerOCL()
-        }
     }
 
-    private fun initData() {
-        val user = AVUser.getCurrentUser()
-        mBackground = null
-        Thread(Runnable {
-            mNextChapters = AVUser.getCurrentUser()
-                    .getRelation<AVObject>(getString(R.string.info_table_chapter_nexts))
-                    .query.find()
-        }).start()
-        mChapter = user.getAVObject<AVObject>(getString(R.string.info_self_game_current_edit))
+    override fun initData() {
+
     }
 
     private fun fillContentWith(chapter: AVObject) {
@@ -175,7 +185,8 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         mSaveNext = findViewById(R.id.create_save_next) as Button
         mCancel = findViewById(R.id.create_cancel) as Button
 
-        mChapterChooser = ChapterChooser()
+        fillContentWith(mChapter as AVObject)
+        registerOCL()
     }
 
     private fun registerOCL() {
@@ -248,7 +259,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
 
     @Throws(AVException::class)
     private fun saveChapterInstance(): AVObject {
-        val chapterTable = mGame!!.getString(getString(R.string.info_table_chapter_table_name))
+        val chapterTable = mGame!!.getString(getString(R.string.info_table_game_chapter_table_name))
         val title = mChapterNameEdit!!.text.toString()
         val content = mChapterContentEdit!!.text.toString()
         val pic = Global.Bitmap2Bytes((mBackground as BitmapDrawable).bitmap)
@@ -404,7 +415,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     private fun createEmptyChapter(): AVObject? {
         try {
             return saveChapter(
-                    mGame!!.getString(getString(R.string.info_table_chapter_table_name)),
+                    mGame!!.getString(getString(R.string.info_table_game_chapter_table_name)),
                     getString(R.string.info_new_chapter),
                     "", null, null)
         } catch (e: AVException) {

@@ -41,7 +41,7 @@
     <string name="info_self_game_current_edit">current_edit</string>
     <string name="info_game_prefix">game_</string>
     <string name="hint_game_name">游戏名</string>
-    <string name="hint_game_description">简单描述</string
+    <string name="hint_game_description">简单描述</string>
     <string name="info_confirm">确认</string>
     <string name="info_cover">封面</string>
     <string name="error_invalid_game_name">游戏名不可为空</string>
@@ -59,7 +59,7 @@
     <string name="info_table_current_edit">current_edit</string>
     <string name="info_choose_chapter">选择章节</string>
     <string name="info_new_chapter">新章节</string>
-    <string name="info_table_chapter_table_name">chapter_table_name</string>
+    <string name="info_table_game_chapter_table_name">chapter_table_name</string>
     <string name="error_create_empty_chapter_failed">创建新章节失败</string>
     <string name="error_query_failed">获取章节列表失败</string>
     <string name="error_require_gamelist_failed">游戏列表获取失败，请检查网络连接</string>
@@ -72,4 +72,7 @@
     <string name="info_game_add_new">创建新游戏</string>
     <string name="info_table_user_have_game">have_games</string>
     <string name="info_table_game_cover">cover</string>
+    <string name="info_return">返回</string>
+    <string name="info_action">动作</string>
+    <string name="info_chapter_title">章节名</string>
 </resources>

@@ -83,7 +83,7 @@ class GameActivity : Activity() {
             try {
                 mGame = AVObject.createWithoutData(getString(R.string.info_table_game), gameID)
                 mGame!!.fetch()
-                mCurrentChapter = AVObject.createWithoutData(mGame!!.getString(getString(R.string.info_table_chapter_table_name)), chapterID)
+                mCurrentChapter = AVObject.createWithoutData(mGame!!.getString(getString(R.string.info_table_game_chapter_table_name)), chapterID)
                 mCurrentChapter!!.fetch()
                 mHandler.sendMessage(mHandler.obtainMessage(INIT_ADD_CHAPTER))
             } catch (e: AVException) {

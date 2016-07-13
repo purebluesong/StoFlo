@@ -15,6 +15,7 @@ import android.os.Message
 import android.view.LayoutInflater
 import android.widget.*
 import com.avos.avoscloud.AVFile
+import com.avos.avoscloud.AVRelation
 import com.sprout.wi.stoflo.Global
 import java.util.*
 
@@ -111,8 +112,13 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
         val descriptionView :TextView = templateView.findViewById(R.id.game_description) as TextView
         titleView.text = game.getString(getString(R.string.info_table_game_name))
         descriptionView.text = game.getString(getString(R.string.info_table_game_description))
-
+        templateView.setOnClickListener { view -> editGame(gameListView?.indexOfChild(view)) }
         gameListView?.addView(templateView)
+    }
+
+    private fun editGame(indexOfChild: Int?) {
+        context?.mGame = gamelist[indexOfChild as Int]
+        context?.reLoadView()
     }
 
     private fun newGameOnClick() {
@@ -120,7 +126,9 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
         dialog.show(context?.fragmentManager, "CreateGameDialogFragment")
     }
 
-    override fun getRootView(): View? {return rootView}
+    override fun getRootView(): View? {
+        return rootView
+    }
 
     override fun onCreate() {
     }
@@ -151,13 +159,12 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
             game.put(getString(R.string.info_table_game_description), description)
             game.saveInBackground()
             val user = AVUser.getCurrentUser()
-            user.put(getString(R.string.info_table_owner_game), game.objectId)
+            user.getRelation<AVObject>(getString(R.string.info_table_user_have_game)).add(game)
             user.saveInBackground()
         } else {
             context?.toast(R.string.error_create_game_failed)
         }
     }
-
 }
 
 fun LayoutInflater.inflate(resID: Int): Any {
