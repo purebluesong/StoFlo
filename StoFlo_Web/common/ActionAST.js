@@ -218,6 +218,19 @@ export default class ActionAST {
         return l
     }
 
+    static create = (chapter, Action) => {
+        action = new Action()
+        action.save()
+        return new ActionAST_Condition({
+            op: '=',
+            op1: '1',
+            op2: '1',
+            t: new ActionAST_Goto({ chapterId: chapter.chapterId }),
+            f: new ActionAST_Goto({ chapterId: chapter.chapterId }),
+            action: action
+        })
+    }
+
     constructor(o) {
         for (let i in o) {
             this[i] = o[i]
