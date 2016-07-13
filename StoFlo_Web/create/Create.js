@@ -5,7 +5,7 @@ import {Tabs, Tab} from 'material-ui/Tabs'
 import TextField from 'material-ui/TextField'
 import Login from '../common/Login'
 import GameWindow from '../common/GameWindow'
-import {AVModel} from '../common/model'
+import {AVModel, getChapters} from '../common/model'
 import GameChooser from './GameChooser'
 import ChapterList from './ChapterList'
 import VariableList from './VariableList'
@@ -37,7 +37,11 @@ export default class Create extends React.Component {
     }
 
     onChooseGameFinished = (game) => {
-        this.setState({modal: ''})
+        this.setState({
+            modal: '',
+            game: game,
+            chapters: game::getChapters()
+        })
     }
 
     render = () => (

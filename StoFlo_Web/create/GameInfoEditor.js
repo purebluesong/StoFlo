@@ -26,7 +26,6 @@ export default class GameInfoEditor extends React.Component {
         this.state.game.set("name",          this.refs.title.getValue())
                        .set("description",   this.refs.description.getValue())
                        .set("game_creator",  AV.User.current())
-                       .set("start_chapter", initChapter)
                        .save()
                        .try(this.props.onFinished)
                        .catch(alert)
