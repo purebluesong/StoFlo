@@ -1,5 +1,6 @@
 package com.sprout.wi.stoflo
 
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import com.avos.avoscloud.AVUser
 import com.avos.avoscloud.StatusCallback
+import com.sprout.wi.stoflo.Activity.LoginActivity
 
 import java.io.ByteArrayOutputStream
 
@@ -34,5 +36,15 @@ object Global {
     fun bitmap2Drawable(pic: Bitmap, res: Resources): Drawable {
         return BitmapDrawable(res, pic)
     }
+
+    interface standardAvtivityInterface {
+        fun onStart()
+        fun onCreate()
+        fun onStop()
+        fun onDestory()
+
+    }
+
+
 
 }
