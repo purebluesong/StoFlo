@@ -1,7 +1,6 @@
 package com.sprout.wi.stoflo.views
 
 import android.app.DialogFragment
-import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.sprout.wi.stoflo.Activity.CreateStoryActivity
 import com.sprout.wi.stoflo.Activity.createInter
@@ -32,7 +31,6 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
 
     override fun getRootView() {
         return
-        throw UnsupportedOperationException()
     }
 
     override fun onCreate() {

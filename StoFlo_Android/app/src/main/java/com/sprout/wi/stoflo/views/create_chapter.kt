@@ -3,7 +3,6 @@ package com.sprout.wi.stoflo.views
 import android.annotation.TargetApi
 import android.app.DialogFragment
 import android.content.DialogInterface
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -28,13 +27,15 @@ import com.sprout.wi.stoflo.R
 import com.sprout.wi.stoflo.fragment.ChooseChapterDialogFragment
 import com.sprout.wi.stoflo.fragment.ChooseChapterMultipleFragment
 import com.sprout.wi.stoflo.fragment.CreateGameDialogFragment
+import org.jetbrains.anko.find
 import java.util.*
 
 /**
  * Created by sprout on 16-7-13.
  */
-class CreateChapter(Context mContext) :createInter {
+class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     private var mChapterNameEdit: EditText? = null
+
     private var mChapterContentEdit: EditText? = null
     private var mChapterName: Button? = null
     private var mChapterContentBackground: Button? = null
@@ -48,12 +49,49 @@ class CreateChapter(Context mContext) :createInter {
     private var mGame: AVObject? = null
     private var mNextChapters: List<AVObject>? = null
     private var mBackground: Drawable? = null
+    private var context: CreateStoryActivity? = null;
 
     init {
-
+        context = createStoryActivity
     }
 
-    fun onStart() {
+    private fun getString(resid: Int): String? {
+        return context?.getString(resid)
+    }
+
+    private fun findViewById(resid : Int): View? {
+        return context?.find(resid)
+    }
+
+    override fun iniData() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun iniView() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun getRootView(): View {
+        throw UnsupportedOperationException()
+    }
+
+    override fun haveFlage(): Boolean {
+        throw UnsupportedOperationException()
+    }
+
+    override fun onCreate() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun onStop() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun onDestory() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun onStart() {
         if (mGame != null) {
             initData()
             initView()
