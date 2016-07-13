@@ -12,12 +12,10 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.*
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.HorizontalScrollView
-import android.widget.Toast
+import android.widget.*
 import cn.finalteam.galleryfinal.GalleryFinal
 import cn.finalteam.galleryfinal.model.PhotoInfo
 import com.avos.avoscloud.*
@@ -50,6 +48,9 @@ class CreateStoryActivity : Activity(), CreateGameDialogFragment.CreateGameListe
     private var mGame: AVObject? = null
     private var mNextChapters: List<AVObject>? = null
     private var mBackground: Drawable? = null
+    private var mGameList: LinearLayout? = null;
+    private var mChapterCreate: LinearLayout? = null;
+    private var mActionCreate: LinearLayout? = null;
 
     private val mHandler = object : Handler() {
         override fun handleMessage(msg: Message) {
@@ -64,14 +65,18 @@ class CreateStoryActivity : Activity(), CreateGameDialogFragment.CreateGameListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.sprout.wi.stoflo.R.layout.activity_create_story)
         if (AVUser.getCurrentUser() == null) {
             jumpTo(LoginActivity::class.java)
         }
-        mGame = AVUser.getCurrentUser().getAVObject<AVObject>(getString(R.string.info_key_self_game))
-        if (mGame == null) {
-            showCreateGameDialog()
-        }
+        loadContentView()
+        setContentView(mGameList)
+    }
+
+    private fun loadContentView() {
+        var layoutInflater = LayoutInflater.from(this);
+        mGameList = layoutInflater.inflate(R.layout.create_story_list,null) as LinearLayout?
+        mChapterCreate = layoutInflater.inflate(R.layout.activity_create_story, null) as LinearLayout?
+        mActionCreate = layoutInflater.inflate(R.layout.create_action, null) as LinearLayout?
     }
 
     override fun onStart() {
