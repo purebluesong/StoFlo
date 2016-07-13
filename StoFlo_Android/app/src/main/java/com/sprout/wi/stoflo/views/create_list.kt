@@ -2,9 +2,6 @@ package com.sprout.wi.stoflo.views
 
 import android.app.DialogFragment
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
 import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.AVUser
 import com.sprout.wi.stoflo.Activity.CreateStoryActivity
@@ -13,6 +10,13 @@ import com.sprout.wi.stoflo.R
 import com.sprout.wi.stoflo.fragment.CreateGameDialogFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
+import android.os.Handler
+import android.os.Message
+import android.view.LayoutInflater
+import android.widget.*
+import com.avos.avoscloud.AVFile
+import com.sprout.wi.stoflo.Global
+import java.util.*
 
 
 /**
@@ -22,13 +26,29 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
 
     var rootView : LinearLayout? = null
     var context : CreateStoryActivity? = null
-    var gamelist : List<AVObject>? = null
+    var gamelist : List<AVObject> = ArrayList()
     var gameListView : LinearLayout? = null
+    var imageViewQueue: List<ImageView> = ArrayList()
+    var coverQueue: List<AVFile> = ArrayList()
+    private val imageFillCount: Int = 0
+    private var initOver: Boolean = false
+
+    companion object {
+        private val MSG_METHOD = 1
+    }
+
+    internal val handler: Handler = object :Handler(){
+        override fun handleMessage(msg: Message?) {
+            when(msg?.what) {
+                MSG_METHOD -> (msg?.obj as Runnable).run()
+            }
+            super.handleMessage(msg)
+        }
+    }
 
     init {
         context = createStoryActivity
     }
-
 
     private fun getString(resid: Int): String? {
         return context?.getString(resid)
@@ -39,20 +59,60 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
     }
 
     override fun haveFlag(): Boolean {
-        throw UnsupportedOperationException()
+        return context?.mGame == null
     }
 
     override fun iniData() {
-        val games = AVUser.getCurrentUser().getRelation<AVObject>(getString(R.string.info_table_user_have_game))
-        Thread(Runnable {  gamelist = games.query.find() }).start()
+
     }
 
     override fun iniView() {
         val inflater = context?.layoutInflater
-        rootView = inflater?.inflate(R.layout.create_story_list, null) as LinearLayout?
+        rootView = inflater?.inflate(R.layout.create_story_list) as LinearLayout?
         val newGameButton :Button = findView(R.id.create_new_game) as Button
         newGameButton.setOnClickListener { newGameOnClick() }
         gameListView = findView(R.id.create_game_list_container) as LinearLayout?
+        Thread(Runnable {
+            val games = AVUser.getCurrentUser().getRelation<AVObject>(getString(R.string.info_table_user_have_game))
+            gamelist = games.query.find()
+            handler.sendMessage(handler.obtainMessage(MSG_METHOD, Runnable {
+                for (game in gamelist) {
+                    addNewViewToGamesView(game)
+                }
+                initOver = true
+            }))
+        }).start()
+        fillCover(gameListView?.childCount as Int)
+    }
+
+
+    private fun fillCover(childCount: Int) {
+        Thread(Runnable {
+            while (imageFillCount < childCount) {
+                val imageView = imageViewQueue.firstOrNull()
+                val cover = coverQueue.firstOrNull()
+                if ( imageView != null && cover != null) {
+                    imageViewQueue - imageView
+                    coverQueue - cover
+                    imageView.setImageBitmap(Global.Bytes2Bimap(cover.data))
+                    imageFillCount + 1
+                }
+            }
+        }).start()
+    }
+
+    private fun addNewViewToGamesView(game: AVObject) {
+        val inflator = context?.layoutInflater
+        val templateView :LinearLayout = inflator?.inflate(R.layout.game_shortcut) as LinearLayout
+        val cover :ImageView = templateView.findViewById(R.id.game_cover) as ImageView
+        imageViewQueue + cover
+        coverQueue + game.getAVFile<AVFile>(getString(R.string.info_table_game_cover))
+        val titleView :TextView = templateView.findViewById(R.id.game_title) as TextView
+        val descriptionView :TextView = templateView.findViewById(R.id.game_description) as TextView
+        titleView.text = game.getString(getString(R.string.info_table_game_name))
+        descriptionView.text = game.getString(getString(R.string.info_table_game_description))
+
+        gameListView?.addView(templateView)
     }
 
     private fun newGameOnClick() {
@@ -60,24 +120,18 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
         dialog.show(context?.fragmentManager, "CreateGameDialogFragment")
     }
 
-    override fun getRootView(): View? {
-        return rootView
-    }
+    override fun getRootView(): View? {return rootView}
 
     override fun onCreate() {
-        throw UnsupportedOperationException()
     }
 
     override fun onStop() {
-        throw UnsupportedOperationException()
     }
 
     override fun onDestory() {
-        throw UnsupportedOperationException()
     }
 
     override fun onStart() {
-        throw UnsupportedOperationException()
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment?) {
@@ -93,11 +147,9 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
 
         if (!cancel) {
             val game = AVObject(getString(R.string.info_table_game))
-            val chapterTable = getString(R.string.info_game_prefix) + gameName.hashCode()
             game.put(getString(R.string.info_table_game_name), gameName)
             game.put(getString(R.string.info_table_game_description), description)
-            game.put(getString(R.string.info_table_chapter_table_name), chapterTable)
-            context?.mGame = game
+            game.saveInBackground()
             val user = AVUser.getCurrentUser()
             user.put(getString(R.string.info_table_owner_game), game.objectId)
             user.saveInBackground()
@@ -106,4 +158,8 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
         }
     }
 
+}
+
+fun LayoutInflater.inflate(resID: Int): Any {
+    return inflate(resID,null)
 }

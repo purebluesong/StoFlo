@@ -294,7 +294,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         if (startChapter != null) {
             game.put(getString(R.string.info_table_start_chapter), startChapter)
         }
-        game.saveInBackground(object : SaveCallback() {
+        .saveInBackground(object : SaveCallback() {
             override fun done(e: AVException) {
                 Toast.makeText(context?.applicationContext, R.string.success_create_game, Toast.LENGTH_SHORT)
             }

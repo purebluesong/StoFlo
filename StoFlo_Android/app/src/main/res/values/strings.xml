@@ -41,7 +41,7 @@
     <string name="info_self_game_current_edit">current_edit</string>
     <string name="info_game_prefix">game_</string>
     <string name="hint_game_name">游戏名</string>
-    <string name="hint_game_description">简单描述</string>
+    <string name="hint_game_description">简单描述</string
     <string name="info_confirm">确认</string>
     <string name="info_cover">封面</string>
     <string name="error_invalid_game_name">游戏名不可为空</string>
@@ -71,4 +71,5 @@
     <string name="info_my_game">我的世界</string>
     <string name="info_game_add_new">创建新游戏</string>
     <string name="info_table_user_have_game">have_games</string>
+    <string name="info_table_game_cover">cover</string>
 </resources>
