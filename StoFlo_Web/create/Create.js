@@ -11,6 +11,7 @@ import ChapterList from './ChapterList'
 import VariableList from './VariableList'
 import ResourceList from './ResourceList'
 import AddBranchButton from './AddBranchButton'
+import BranchOptionEditor from './BranchOptionEditor'
 
 const styles = {
     frameContainer: {
@@ -25,10 +26,12 @@ const styles = {
 export default class Create extends React.Component {
     state = {
         game: new AVModel('Game'),
-        chapters: [],
+        chapters: {},
         actions: [],
-        chapter: new AVModel('Chapter'),
         variables: {},
+
+        chapter: new AVModel('Chapter'),
+        options: [],
 
         modal: ''
     }
@@ -38,15 +41,35 @@ export default class Create extends React.Component {
     }
 
     onChooseGameFinished = (game) => {
-        AV.Query.doCloudQuery(`select * from Chapter where game='${game.getObjectId()}'`)
-                .try(chapters => {
-                    this.setState({
-                        modal: '',
-                        game: game,
-                        chapters: chapters.results
+        this.setState({ modal: '', game: game })
+        AV.Query.doCloudQuery(`select * from Chapter where gameId='${game.getObjectId()}'`)
+                .try(response => {
+                    const chapters = {}
+                    response.results.forEach(chapter => {
+                        chapters[chapter.getObjectId()] = chapter
                     })
+                    this.setState({ chapters: chapters })
+                    this.onSelectChapter(chapters[game.get('start_chapter').getObjectId()])
                 })
                 .catch(alert)
+        AV.Query.doCloudQuery(`select * from Action where gameId='${game.getObjectId()}'`)
+                .try(response => {
+                    const actions = {}
+                    response.results.forEach(action => {
+                        actions[action.getObjectId()] = action
+                    })
+                    this.setState({ actions: actions })
+                })
+                .catch(alert)
+    }
+
+    onSelectChapter = (chapter) => {
+        chapter.relation('actions').query().find().try(options => {
+            this.setState({
+                chapter: chapter,
+                options: options
+            })
+        }).catch(alert)
     }
 
     render = () => (
@@ -63,7 +86,7 @@ export default class Create extends React.Component {
                     </Tab>
                     <Tab label="变量">
                         <VariableList
-                            variables={this.state.game.get('init_vars')}
+                            variables={JSON.parse(this.state.game.get('init_vars')||'{}')}
                             open={this.state.modal == 'add_variable'}
                         />
                     </Tab>
@@ -84,8 +107,14 @@ export default class Create extends React.Component {
                     <GameWindow chapter={this.state.chapter} onAction={()=>{}} variables={{}} />
                 </Paper>
             </div>
-            <div style={{ margin: '.5vh .666vw .5vh 0', height: '48.5vh', width:'78.333vw', float: 'left' }}>
-                <AddBranchButton style={{ height: '100%', width: '56px' }} />
+            <div style={{ margin: '.5vh .666vw .5vh 0', height: '48.5vh', width: '78.333vw', float: 'left' }}>
+                {
+                    this.state.options.map(option => (
+                        <BranchOptionEditor style={{ width: '30vw', height: '100%', float: 'left' }}
+                                            key={option.getObjectId()} entry={option} actions={this.state.actions} />
+                    ))
+                }
+                <AddBranchButton style={{ height: '100%', width: '56px', float: 'left' }} />
             </div>
         </div></MuiThemeProvider>
     )

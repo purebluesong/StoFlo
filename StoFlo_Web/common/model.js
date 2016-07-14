@@ -10,12 +10,12 @@ export const AVModel = (() => {
 
 export const createChapter = function(done) {
     const chapter = new AVModel('Chapter')
-    chapter.set('game', this.getObjectId())
+    chapter.set('gameId', this.getObjectId())
     chapter.set('content', '')
     chapter.save().try(chapter => {
         const act = JSON.stringify({ assignments: [], chapterId: chapter.getObjectId() })
         const action = new AVModel('Action')
-        action.set('game', this.getObjectId())
+        action.set('gameId', this.getObjectId())
         action.set('op', '=')
         action.set('op1', '1')
         action.set('op2', '1')

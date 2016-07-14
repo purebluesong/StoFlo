@@ -1,5 +1,79 @@
 import {alert} from './util'
 
+export default class ActionAST {
+    static fromAction = (action, actions) => {
+        return new ActionAST_Condition({
+            action: action,
+            t: ActionAST.fromObject(JSON.parse(action.get('true')),  actions),
+            f: ActionAST.fromObject(JSON.parse(action.get('false')), actions),
+            op:  action.get('op'),
+            op1: action.get('op1'),
+            op2: action.get('op2')
+        })
+    }
+
+    static fromObject = (o, actions) => {
+        if (o.assignments.length) {
+            const assignment = o.assignment.shift()
+            return new ActionAST_Assignment({
+                next: ActionAST.fromObject(o, actions),
+                ...assignment
+            })
+        } else if (o.chapterId) {
+            return new ActionAST_Goto({ chapterId: o.chapterId })
+        } else if (o.actionId) {
+            return ActionAST.fromAction(actions[o.actionId], actions)
+        }
+    }
+
+    static readVariable = (name, variables) => {
+        const i = parseInt(name, 10)
+        return !isNaN(i) ? i
+                         : (name == 'rand' ? Math.floor(Math.random() * 100)
+                                           : variables[name])
+    }
+
+    static funcDict = {
+        '>':  (x,y) => x >  y,
+        '=':  (x,y) => x == y,
+        '<':  (x,y) => x <  y,
+        '>=': (x,y) => x >= y,
+        '<=': (x,y) => x <= y,
+        '!=': (x,y) => x != y,
+
+        '+': (x,y) => x + y,
+        '-': (x,y) => x - y,
+        '*': (x,y) => x * y,
+        '/': (x,y) => Math.floor(x / y + 0.5)
+    }
+
+    static toList = (node) => {
+        const l = []
+        node.toList(0, l)
+        return l
+    }
+
+    static create = (chapter, game) => {
+        const action = new AVModel('Action')
+        action.set('game', game.getObjectId())
+        action.save()
+        return new ActionAST_Condition({
+            op: '=',
+            op1: '1',
+            op2: '1',
+            t: new ActionAST_Goto({ chapterId: chapter.chapterId }),
+            f: new ActionAST_Goto({ chapterId: chapter.chapterId }),
+            action: action
+        })
+    }
+
+    constructor(o) {
+        for (let i in o) {
+            this[i] = o[i]
+        }
+    }
+}
+
 class ActionAST_Condition extends ActionAST {
     saveAsActions(done) {
         this.action.set('op', this.op)
@@ -127,16 +201,16 @@ class ActionAST_Goto extends ActionAST {
                 break
             case 'assignment':
                 n = new ActionAST_Assignment({
-                    left: 'count'
-                    op: '+'
-                    op1: 'count'
-                    op2: '1'
+                    left: 'count',
+                    op: '+',
+                    op1: 'count',
+                    op2: '1',
                     next: this
                 })
                 break
         }
 
-        _fixrefs(node) {
+        const _fixrefs = node => {
             if (node.next != null) {
                 if (node.next == this) {
                     return node.next = n
@@ -163,80 +237,6 @@ class ActionAST_Goto extends ActionAST {
 
     eval(variables) {
         return this.chapterId
-    }
-}
-
-export default class ActionAST {
-    static fromAction = (action, actions) => {
-        return new ActionAST_Condition({
-            action: action,
-            t: ActionAST.fromObject(JSON.parse(action.get('true')),  actions),
-            f: ActionAST.fromObject(JSON.parse(action.get('false')), actions),
-            op:  action.get('op'),
-            op1: action.get('op1'),
-            op2: action.get('op2')
-        })
-    }
-
-    static fromObject = (o, actions) => {
-        if (o.assignments.length) {
-            const assignment = o.assignment.shift()
-            return new ActionAST_Assignment({
-                next: ActionAST.fromObject(o, actions),
-                ...assignment
-            })
-        } else if (o.chapterId) {
-            return new ActionAST_Goto({ chapterId: o.chapterId })
-        } else if (o.actionId) {
-            return ActionAST.fromAction(actions[o.actionId], actions)
-        }
-    }
-
-    static readVariable = (name, variables) => {
-        const i = parseInt(name, 10)
-        return !isNaN(i) ? i
-                         : (name == 'rand' ? Math.floor(Math.random() * 100)
-                                           : variables[name])
-    }
-
-    static funcDict = {
-        '>':  (x,y) => x >  y,
-        '=':  (x,y) => x == y,
-        '<':  (x,y) => x <  y,
-        '>=': (x,y) => x >= y,
-        '<=': (x,y) => x <= y,
-        '!=': (x,y) => x != y,
-
-        '+': (x,y) => x + y,
-        '-': (x,y) => x - y,
-        '*': (x,y) => x * y,
-        '/': (x,y) => Math.floor(x / y + 0.5)
-    }
-
-    static toList = (node) => {
-        const l = []
-        node.toList(0, l)
-        return l
-    }
-
-    static create = (chapter, game) => {
-        const action = new AVModel('Action')
-        action.set('game', game.getObjectId())
-        action.save()
-        return new ActionAST_Condition({
-            op: '=',
-            op1: '1',
-            op2: '1',
-            t: new ActionAST_Goto({ chapterId: chapter.chapterId }),
-            f: new ActionAST_Goto({ chapterId: chapter.chapterId }),
-            action: action
-        })
-    }
-
-    constructor(o) {
-        for (let i in o) {
-            this[i] = o[i]
-        }
     }
 }
 
