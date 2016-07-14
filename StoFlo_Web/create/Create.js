@@ -74,6 +74,7 @@ export default class Create extends React.Component {
                 chapter: chapter,
                 options: options
             })
+            this.refs.content.value = chapter.get('content')
         }).catch(alert)
     }
 
@@ -120,9 +121,11 @@ export default class Create extends React.Component {
             </Paper>
             <div style={{ margin: '0 0 0 0' }}>
                 <Paper style={styles.frameContainer}>
-                    <TextField ref="content" style={{ maxHeight: '50vh' }} textareaStyle={{ height: '47vh' }}
-                               multiLine={true} fullWidth={true} hintText={'Type your story here.'}
-                               onBlur={()=>this.state.chapter.set('content', this.refs.content.getValue())} />
+                    <textarea
+                        ref="content"
+                        style={{ width: '100%', height: '47vh', border: 'none', marginTop: '6px' }}
+                        onBlur={e=>this.state.chapter.set('content', this.refs.content.value)}
+                    />
                 </Paper>
                 <Paper style={styles.frameContainer}>
                     <GameWindow chapter={this.state.chapter} onAction={()=>{}} variables={{}} />
