@@ -1,3 +1,5 @@
+import {alert} from './util'
+
 export const AVModel = (() => {
     const cache = {}
     return function AVModel(x) {
@@ -6,14 +8,23 @@ export const AVModel = (() => {
     }
 })()
 
-export const getChapters = function() {
-    const tableName ='Chapter_' + this.getObjectId()
-    const chapters = (new AV.Query(tableName)).find()
-    if (chapters) {
-        return chapters
-    } else {
-        const initChapter = new AVModel(tableName)
-        initChapter.save().try(chapter => this.set('start_chapter', chapter))
-        return [initChapter]
-    }
+export const createChapter = function(done) {
+    const chapter = new AVModel('Chapter')
+    chapter.set('game', this.getObjectId())
+    chapter.set('content', '')
+    chapter.save().try(chapter => {
+        const act = JSON.stringify({ assignments: [], chapterId: chapter.getObjectId() })
+        const action = new AVModel('Action')
+        action.set('game', this.getObjectId())
+        action.set('op', '=')
+        action.set('op1', '1')
+        action.set('op2', '1')
+        action.set('true', act)
+        action.set('false', act)
+        action.set('title', '选项名称')
+        action.save().try(action => {
+            chapter.relation('actions').add(action)
+            chapter.save().try(done).catch(alert)
+        }).catch(alert)
+    }).catch(alert)
 }

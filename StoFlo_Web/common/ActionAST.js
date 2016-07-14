@@ -109,11 +109,12 @@ class ActionAST_Goto extends ActionAST {
         })
     }
 
-    insert(type, Action, root) {
+    insert(type, game, root) {
         let n
         switch (type) {
             case 'condition':
-                const action = new Action()
+                const action = new AVModel('Action')
+                action.set('game', game.getObjectId())
                 action.save()
                 n = new ActionAST_Condition({
                     op: '=',
@@ -218,8 +219,9 @@ export default class ActionAST {
         return l
     }
 
-    static create = (chapter, Action) => {
-        action = new Action()
+    static create = (chapter, game) => {
+        const action = new AVModel('Action')
+        action.set('game', game.getObjectId())
         action.save()
         return new ActionAST_Condition({
             op: '=',

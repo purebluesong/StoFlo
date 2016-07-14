@@ -5,7 +5,7 @@ import {Tabs, Tab} from 'material-ui/Tabs'
 import TextField from 'material-ui/TextField'
 import Login from '../common/Login'
 import GameWindow from '../common/GameWindow'
-import {AVModel, getChapters} from '../common/model'
+import {AVModel} from '../common/model'
 import GameChooser from './GameChooser'
 import ChapterList from './ChapterList'
 import VariableList from './VariableList'
@@ -26,6 +26,7 @@ export default class Create extends React.Component {
     state = {
         game: new AVModel('Game'),
         chapters: [],
+        actions: [],
         chapter: new AVModel('Chapter'),
         variables: {},
 
@@ -37,11 +38,15 @@ export default class Create extends React.Component {
     }
 
     onChooseGameFinished = (game) => {
-        this.setState({
-            modal: '',
-            game: game,
-            chapters: game::getChapters()
-        })
+        AV.Query.doCloudQuery(`select * from Chapter where game='${game.getObjectId()}'`)
+                .try(chapters => {
+                    this.setState({
+                        modal: '',
+                        game: game,
+                        chapters: chapters.results
+                    })
+                })
+                .catch(alert)
     }
 
     render = () => (
