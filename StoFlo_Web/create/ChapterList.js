@@ -5,11 +5,11 @@ import RaisedButton from 'material-ui/RaisedButton'
 export default props => (
     <div>
         <List>{
-            props.chapters.map(chapter => (
+            Object.keys(props.chapters||{}).map(chapterId => (
                 <ListItem
-                    key={chapter.getObjectId()}
-                    primaryText={chapter.get('content').slice(0, 20)}
-                    onTouchTap={() => props.onTouchTap(chapter)}
+                    key={chapterId}
+                    primaryText={props.chapters[chapterId].get('content').slice(0, 20) || "空白章节"}
+                    onTouchTap={() => props.onTouchTap(chapterId)}
                 />
             ))
         }</List>

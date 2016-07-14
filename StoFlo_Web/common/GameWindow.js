@@ -36,7 +36,7 @@ export default class GameWindow extends React.Component {
         const content   = nextProps.chapter.get('content')
         const variables = nextProps.variables
         this.setState({
-            sections: parseContent(content, variables),
+            sections: this.parseContent(content, variables),
             step: 0
         })
     }

@@ -3,7 +3,7 @@ import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 import {alert} from '../common/util'
-import {AVModel} from '../common/model'
+import {AVModel, createChapter} from '../common/model'
 
 export default class GameInfoEditor extends React.Component {
     static propTypes = {
@@ -23,11 +23,20 @@ export default class GameInfoEditor extends React.Component {
     }
 
     submit = () => {
+        const initChapter = game => {
+            game::createChapter(chapter => {
+                game.set('start_chapter', chapter)
+                    .save()
+                    .try(this.props.onFinished)
+                    .catch(alert)
+            })
+        }
+
         this.state.game.set("name",          this.refs.title.getValue())
                        .set("description",   this.refs.description.getValue())
                        .set("game_creator",  AV.User.current())
                        .save()
-                       .try(this.props.onFinished)
+                       .try(initChapter)
                        .catch(alert)
     }
 
