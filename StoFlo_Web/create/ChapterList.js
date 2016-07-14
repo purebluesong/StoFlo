@@ -8,8 +8,8 @@ export default props => (
             Object.keys(props.chapters||{}).map(chapterId => (
                 <ListItem
                     key={chapterId}
-                    primaryText={props.chapters[chapterId].get('content').slice(0, 20)}
-                    onTouchTap={() => props.onTouchTap(props.chapters[chapterId])}
+                    primaryText={props.chapters[chapterId].get('content').slice(0, 20) || "空白章节"}
+                    onTouchTap={() => props.onTouchTap(chapterId)}
                 />
             ))
         }</List>

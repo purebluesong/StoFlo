@@ -172,7 +172,7 @@ class ActionAST_Goto extends ActionAST {
 
     toList(indent, list) {
         list.push({
-            type: 'insert',
+            type: '+',
             indent: indent,
             node: this
         })

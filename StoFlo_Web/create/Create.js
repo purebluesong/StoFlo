@@ -1,8 +1,11 @@
 import React from 'react'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Paper from 'material-ui/Paper'
+import {List, ListItem} from 'material-ui/List'
 import {Tabs, Tab} from 'material-ui/Tabs'
 import TextField from 'material-ui/TextField'
+import FlatButton from 'material-ui/FlatButton'
+import Snackbar from 'material-ui/Snackbar'
 import Login from '../common/Login'
 import GameWindow from '../common/GameWindow'
 import {AVModel} from '../common/model'
@@ -32,8 +35,10 @@ export default class Create extends React.Component {
 
         chapter: new AVModel('Chapter'),
         options: [],
+        lastFocus: ()=>{},
 
-        modal: ''
+        modal: '',
+        snack: ''
     }
 
     onLoginFinished = (user) => {
@@ -72,6 +77,20 @@ export default class Create extends React.Component {
         }).catch(alert)
     }
 
+    save = () => {
+        this.state.chapter.save().catch(alert)
+        AV.Object.saveAll(this.state.actions).catch(alert)
+        this.setState({ snack: '保存完毕' })
+    }
+
+    setLastFocus = (f) => {
+        this.setState({ lastFocus: f })
+    }
+
+    callLastFocus = (arg) => {
+        this.state.lastFocus(arg)
+    }
+
     render = () => (
         <MuiThemeProvider><div>
             <Login onFinished={this.onLoginFinished} />
@@ -82,6 +101,7 @@ export default class Create extends React.Component {
                         <ChapterList
                             chapters={this.state.chapters}
                             open={this.state.modal == 'add_chapter'}
+                            onTouchTap={this.callLastFocus}
                         />
                     </Tab>
                     <Tab label="变量">
@@ -100,22 +120,43 @@ export default class Create extends React.Component {
             </Paper>
             <div style={{ margin: '0 0 0 0' }}>
                 <Paper style={styles.frameContainer}>
-                    <TextField ref="textField" style={{ maxHeight: '50vh' }} textareaStyle={{ height: '47vh' }}
-                               multiLine={true} fullWidth={true} hintText={'Type your story here.'} />
+                    <TextField ref="content" style={{ maxHeight: '50vh' }} textareaStyle={{ height: '47vh' }}
+                               multiLine={true} fullWidth={true} hintText={'Type your story here.'}
+                               onBlur={()=>this.state.chapter.set('content', this.refs.content.getValue())} />
                 </Paper>
                 <Paper style={styles.frameContainer}>
                     <GameWindow chapter={this.state.chapter} onAction={()=>{}} variables={{}} />
                 </Paper>
             </div>
             <div style={{ margin: '.5vh .666vw .5vh 0', height: '48.5vh', width: '78.333vw', float: 'left' }}>
+                <Paper style={{ width: '30vw', height: '100%', float: 'left', marginRight: '.666vw' }}>
+                    <List>
+
+                    </List>
+                    <FlatButton
+                        style={{ float: 'right', marginRight: '12px' }}
+                        label="Save"
+                        primary={true}
+                        onTouchTap={this.save}
+                    />
+                </Paper>
                 {
                     this.state.options.map(option => (
-                        <BranchOptionEditor style={{ width: '30vw', height: '100%', float: 'left' }}
-                                            key={option.getObjectId()} entry={option} actions={this.state.actions} />
+                        <BranchOptionEditor style={{ width: '30vw', height: '100%', float: 'left', marginRight: '.666vw' }}
+                                            key={option.getObjectId()} entry={option} actions={this.state.actions}
+                                            ref={option.getObjectId()} setLastFocus={this.setLastFocus} />
                     ))
                 }
                 <AddBranchButton style={{ height: '100%', width: '56px', float: 'left' }} />
             </div>
+            <Snackbar
+                open={!!this.state.snack}
+                message={this.state.snack}
+                autoHideDuration={3000}
+                action="确定"
+                onRequestClose={()=>this.setState({ snack: '' })}
+                onActionTouchTap={()=>this.setState({ snack: '' })}
+            />
         </div></MuiThemeProvider>
     )
 }

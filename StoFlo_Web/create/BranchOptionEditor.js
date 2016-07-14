@@ -10,18 +10,24 @@ import ActionAST from "../common/ActionAST"
 const styles = {
     listItem: {
         fontSize: 12
+    },
+    textField: {
+        width: '85%',
+        marginLeft: '7.5%'
     }
 }
 
 export default class BranchOptionEditor extends React.Component {
     static propTypes = {
         entry: React.PropTypes.any.isRequired,
-        actions: React.PropTypes.any.isRequired
+        actions: React.PropTypes.any.isRequired,
+        setLastFocus: React.PropTypes.func.isRequired
     }
 
     state = {
         ast: null,
-        name: ''
+        name: '',
+        editing: null
     }
 
     componentWillMount() {
@@ -31,11 +37,12 @@ export default class BranchOptionEditor extends React.Component {
         })
     }
 
-    renderItem = (item, children) => {
+    renderItem = (item, children, key) => {
         switch (item.type) {
             case 'if':
                 return (
                     <ListItem
+                        key={key}
                         style={styles.listItem}
                         primaryText={`if ${item.node.op1} ${item.node.op} ${item.node.op2}:`}
                         initiallyOpen={true}
@@ -45,17 +52,29 @@ export default class BranchOptionEditor extends React.Component {
             case 'else':
                 return (
                     <ListItem
+                        key={key}
                         style={styles.listItem}
                         primaryText={`else:`}
                         initiallyOpen={true}
                         nestedItems={children}
                     />
                 )
-            case 'assignment':
+            case '=':
                 return (
                     <ListItem
+                        key={key}
                         style={styles.listItem}
                         primaryText={`${item.node.left} = ${item.node.op1} ${item.node.op} ${item.node.op2};`}
+                        initiallyOpen={true}
+                        nestedItems={children}
+                    />
+                )
+            case '+':
+                return (
+                    <ListItem
+                        key={key}
+                        style={styles.listItem}
+                        primaryText={`点击增加语句`}
                         initiallyOpen={true}
                         nestedItems={children}
                     />
@@ -63,8 +82,10 @@ export default class BranchOptionEditor extends React.Component {
             case 'goto':
                 return (
                     <ListItem
+                        key={key}
                         style={styles.listItem}
                         primaryText={`goto ${item.node.chapterId};`}
+                        onTouchTap={()=>this.setState({ editing: item })}
                     />
                 )
         }
@@ -78,16 +99,157 @@ export default class BranchOptionEditor extends React.Component {
                 return items
             } else {
                 rest.shift()
-                items.push(this.renderItem(current, this.renderTree(indent+1, rest)))
+                items.push(this.renderItem(current, this.renderTree(indent+1, rest), rest.length))
             }
         }
         return items
     }
 
+    renderEditor = () => {
+        const item = this.state.editing
+        switch (item.type) {
+            case 'if':
+            case 'else':
+                return [
+                    <TextField
+                        key="op"
+                        style={styles.textField}
+                        floatingLabelText="op:"
+                        value={item.node.op}
+                        onFocus={e=>this.props.setLastFocus(arg => {
+                            item.node.op = arg
+                            this.setState({ast: this.state.ast})
+                        })}
+                        onChange={e=>{
+                            item.node.op = e.target.value
+                            this.setState({ast: this.state.ast})
+                        }}
+                    />,
+                    <TextField
+                        key="op1"
+                        style={styles.textField}
+                        floatingLabelText="op1:"
+                        value={item.node.op1}
+                        onFocus={e=>this.props.setLastFocus(arg => {
+                            item.node.op1 = arg
+                            this.setState({ast: this.state.ast})
+                        })}
+                        onChange={e=>{
+                            item.node.op1 = e.target.value
+                            this.setState({ast: this.state.ast})
+                        }}
+                    />,
+                    <TextField
+                        key="op2"
+                        style={styles.textField}
+                        floatingLabelText="op2:"
+                        value={item.node.op2}
+                        onFocus={e=>this.props.setLastFocus(arg => {
+                            item.node.op2 = arg
+                            this.setState({ast: this.state.ast})
+                        })}
+                        onChange={e=>{
+                            item.node.op2 = e.target.value
+                            this.setState({ast: this.state.ast})
+                        }}
+                    />
+                ]
+            case '=':
+                return [
+                    <TextField
+                        key="left"
+                        style={styles.textField}
+                        floatingLabelText="left:"
+                        value={item.node.left}
+                        onFocus={e=>this.props.setLastFocus(arg => {
+                            item.node.left = arg
+                            this.setState({ast: this.state.ast})
+                        })}
+                        onChange={e=>{
+                            item.node.left = e.target.value
+                            this.setState({ast: this.state.ast})
+                        }}
+                    />,
+                    <TextField
+                        key="op"
+                        style={styles.textField}
+                        floatingLabelText="op:"
+                        value={item.node.op}
+                        onFocus={e=>this.props.setLastFocus(arg => {
+                            item.node.op = arg
+                            this.setState({ast: this.state.ast})
+                        })}
+                        onChange={e=>{
+                            item.node.op = e.target.value
+                            this.setState({ast: this.state.ast})
+                        }}
+                    />,
+                    <TextField
+                        key="op1"
+                        style={styles.textField}
+                        floatingLabelText="op1:"
+                        value={item.node.op1}
+                        onFocus={e=>this.props.setLastFocus(arg => {
+                            item.node.op1 = arg
+                            this.setState({ast: this.state.ast})
+                        })}
+                        onChange={e=>{
+                            item.node.op1 = e.target.value
+                            this.setState({ast: this.state.ast})
+                        }}
+                    />,
+                    <TextField
+                        key="op2"
+                        style={styles.textField}
+                        floatingLabelText="op2:"
+                        value={item.node.op2}
+                        onFocus={e=>this.props.setLastFocus(arg => {
+                            item.node.op2 = arg
+                            this.setState({ast: this.state.ast})
+                        })}
+                        onChange={e=>{
+                            item.node.op2 = e.target.value
+                            this.setState({ast: this.state.ast})
+                        }}
+                    />
+                ]
+            case '+':
+                return [
+                    <FlatButton
+                        key="condition"
+                        label="条件语句"
+                    />,
+                    <FlatButton
+                        key="assignment"
+                        label="赋值语句"
+                    />
+                ]
+            case 'goto':
+                return [
+                    <TextField
+                        key="chapterId"
+                        style={styles.textField}
+                        floatingLabelText="chapterId:"
+                        value={item.node.chapterId}
+                        onFocus={e=>this.props.setLastFocus(arg => {
+                            item.node.chapterId = arg
+                            this.setState({ast: this.state.ast})
+                        })}
+                        onChange={e=>{
+                            item.node.chapterId = e.target.value
+                            this.setState({ast: this.state.ast})
+                        }}
+                    />
+                ]
+        }
+
+
+    }
+
     render = () => (
         <Paper style={this.props.style}>
             <TextField
-                style={{ width: '80%', marginLeft: '10%' }}
+                style={styles.textField}
                 id={this.props.entry.getObjectId()}
                 value={this.state.name}
                 onChange={e=>{
@@ -96,9 +258,28 @@ export default class BranchOptionEditor extends React.Component {
                 }}
                 underlineStyle={{ borderColor: 'transparent' }}
             />
-            <List>{
-                this.state.ast ? this.renderTree(0, ActionAST.toList(this.state.ast)) : ''
-            }</List>
+            {
+                !this.state.editing ? (
+                    <List>{
+                        this.state.ast ? this.renderTree(0, ActionAST.toList(this.state.ast)) : ''
+                    }</List>
+                ) : (
+                    this.renderEditor().concat(
+                        <FlatButton
+                            key="OK"
+                            label="OK"
+                            style={{ float: 'right', marginRight: '10%' }}
+                            primary={true}
+                            onTouchTap={()=>{
+                                this.setState({ editing: null })
+                                this.props.setLastFocus(()=>{})
+                                this.state.ast.saveAsActions(()=>{})
+                            }}
+                        />
+                    )
+                )
+            }
+
         </Paper>
     )
 }
