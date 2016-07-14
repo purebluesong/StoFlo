@@ -14,7 +14,6 @@ import cn.finalteam.galleryfinal.GalleryFinal
 import cn.finalteam.galleryfinal.model.PhotoInfo
 import com.avos.avoscloud.*
 import com.sprout.wi.stoflo.Activity.CreateStoryActivity
-import com.sprout.wi.stoflo.Activity.StoFloActivity
 import com.sprout.wi.stoflo.Activity.createInter
 import com.sprout.wi.stoflo.Global
 import com.sprout.wi.stoflo.R
@@ -161,7 +160,10 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         }
         mChapterContentBackground!!.setOnClickListener { setChapterBackground() }
         mChapterContentText?.setOnClickListener { }
-        mChapterAction?.setOnClickListener {  }
+        mChapterAction?.setOnClickListener {
+            isActionEdit = true
+            context?.reLoadView()
+        }
         mChapterTitle?.setOnClickListener {  }
     }
 
