@@ -25,6 +25,7 @@ class CreateStoryActivity : Activity(){
     private val views = listOf(mGameList,mChapterCreate,mActionCreate)
 
     var mGame: AVObject? = null
+    var isActionEdit = false
     override fun onCreate(savedInstanceState: Bundle?) {
         if (AVUser.getCurrentUser() == null) {
             jumpTo(LoginActivity::class.java)

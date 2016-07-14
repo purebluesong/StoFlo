@@ -40,7 +40,6 @@ dependencies {
     compile 'com.github.traex.rippleeffect:library:1.3'
     compile 'com.android.support:recyclerview-v7:23.0.0'
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
-
 //    compile 'cn.leancloud.android:avoscloud-sdk:v3.+'
 //    compile 'cn.leancloud.android:avoscloud-statistics:v3.+'
 //    compile 'cn.leancloud.android:avoscloud-push:v3.+@aar'

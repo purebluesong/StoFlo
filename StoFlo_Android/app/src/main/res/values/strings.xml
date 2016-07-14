@@ -75,4 +75,9 @@
     <string name="info_return">返回</string>
     <string name="info_action">动作</string>
     <string name="info_chapter_title">章节名</string>
+    <string name="info_action_list">动作列表</string>
+    <string name="info_add">新增</string>
+    <string name="info_variable_list">变量列表</string>
+    <string name="info_edit_hint_judge_success">条件成立时动作</string>
+    <string name="info_edit_hint_judge_failed">条件失败时发生</string>
 </resources>

@@ -32,7 +32,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     private var mSaveNext: Button? = null
     private var mChapter: AVObject? = null
     private var mBackground: Drawable? = null
-    private var context: CreateStoryActivity? = null
+    private var context: CreateStoryActivity = createStoryActivity
     private var chapterTableName = ""
     private var chapterTableQuery: AVQuery<AVObject>? = null
     private var chapterList = ArrayList<AVObject>()
@@ -43,7 +43,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
 
     init {
         context = createStoryActivity
-        rootView = context?.layoutInflater?.inflate(R.layout.create_chapter) as LinearLayout?
+        rootView = context.layoutInflater?.inflate(R.layout.create_chapter) as LinearLayout?
     }
 
     internal val handler: Handler = object : Handler(){
@@ -54,33 +54,33 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     }
 
     private fun getString(resID: Int): String? {
-        return context?.getString(resID)
+        return context.getString(resID)
     }
 
     private fun findViewById(resID: Int): View? {
-        return context?.findViewById(resID)
+        return context.findViewById(resID)
     }
 
     override fun iniData() {
-        if (context?.mGame == null) {
-            context?.reLoadView()
+        if (context.mGame == null) {
+            context.reLoadView()
         } else {
-            chapterTableName = context?.mGame!!.getString(getString(R.string.info_table_game_chapter_table_name))
+            chapterTableName = context.mGame!!.getString(getString(R.string.info_table_game_chapter_table_name))
             chapterTableQuery = AVQuery<AVObject>(chapterTableName)
             mChapter = chapterTableQuery!!.first
             if (mChapter == null) {
                 mChapter = newChapter()
-                (context?.mGame as AVObject).put(getString(R.string.info_table_game_start_chapter),mChapter)
-                (context?.mGame as AVObject).saveInBackground()
+                (context.mGame as AVObject).put(getString(R.string.info_table_game_start_chapter),mChapter)
+                (context.mGame as AVObject).saveInBackground()
             }
         }
     }
 
 
     override fun iniView() {
-        mChapterContentEdit = findViewById(R.id.chapter_content_edit) as EditText
+        mChapterContentEdit = findViewById(R.id.edit_chapter_content) as EditText
         mChapterContentBackground = findViewById(R.id.edit_function_chapter_background) as Button
-        mChapterContentText = findViewById(R.id.chapter_content_text) as Button
+        mChapterContentText = findViewById(R.id.edit_chapter_content_text) as Button
         mChapterAction = findViewById(R.id.edit_chapter_action) as Button
         mChapterTitle = findViewById(R.id.edit_chapter_title) as Button
         mChapterListView = findViewById(R.id.edit_chapters_container) as LinearLayout
@@ -99,7 +99,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
             chapterList = chapterTableQuery?.find() as ArrayList<AVObject>
             handler.sendMessage(handler.obtainMessage(0, Runnable {
                 for (chapter in chapterList) {
-                    val chapterView = context?.layoutInflater?.inflate(R.layout.edit_chapter_shortcut_template)as TextView
+                    val chapterView = context.layoutInflater?.inflate(R.layout.edit_chapter_shortcut_template)as TextView
                     val title = chapter.getString(getString(R.string.info_table_chapter_title))
                     if (title != null) {
                         chapterView.text = title
@@ -119,7 +119,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         mChapterContentEdit?.setText(content)
         Thread(Runnable {
             val background = (mChapter as AVObject).getAVFile<AVFile>(getString(R.string.info_table_chapter_background)).data
-            mBackground = Global.bitmap2Drawable(Global.Bytes2Bimap(background) as Bitmap, context?.resources as Resources)
+            mBackground = Global.bitmap2Drawable(Global.Bytes2Bimap(background) as Bitmap, context.resources as Resources)
             handler.sendMessage(handler.obtainMessage(0, Runnable {
                 mChapterContentEdit?.background = mBackground
             }))
@@ -130,10 +130,8 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         return rootView!!
     }
 
-    private var isActionEdit: Boolean = false
-
     override fun haveFlag(): Boolean {
-        return context?.mGame!= null && !isActionEdit
+        return context.mGame != null && !(context.isActionEdit)
     }
 
     override fun onCreate() {
@@ -161,8 +159,8 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         mChapterContentBackground!!.setOnClickListener { setChapterBackground() }
         mChapterContentText?.setOnClickListener { }
         mChapterAction?.setOnClickListener {
-            isActionEdit = true
-            context?.reLoadView()
+            context.isActionEdit = true
+            context.reLoadView()
         }
         mChapterTitle?.setOnClickListener {  }
     }
@@ -175,7 +173,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
                     "", null, null)
         } catch (e: AVException) {
             e.printStackTrace()
-            context?.toast(R.string.error_create_empty_chapter_failed)
+            context.toast(R.string.error_create_empty_chapter_failed)
             return null
         }
 
@@ -191,14 +189,14 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
             }
 
             override fun onHanlderFailure(requestCode: Int, errorMsg: String) {
-                context?.toast(errorMsg)
+                context.toast(errorMsg)
             }
         })
     }
 
     private fun returnListPage() {
-        context?.mGame = null
-        context?.reLoadView()
+        context.mGame = null
+        context.reLoadView()
     }
 
     private fun attemptSave(): Boolean {
