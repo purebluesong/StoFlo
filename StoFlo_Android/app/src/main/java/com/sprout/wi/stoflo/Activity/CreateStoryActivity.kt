@@ -80,13 +80,9 @@ class CreateStoryActivity : Activity(){
         mCurrent?.onDestory()
     }
 
-    fun jumpTo(activityClass: Class<LoginActivity>) {
+    fun Activity.jumpTo(activityClass: Class<LoginActivity>) {
         startActivity(Intent(this, activityClass))
         finish()
-    }
-
-    fun Activity.toast(msg:String,time:Int = Toast.LENGTH_LONG) {
-        Toast.makeText(this,msg,time)
     }
 
 }

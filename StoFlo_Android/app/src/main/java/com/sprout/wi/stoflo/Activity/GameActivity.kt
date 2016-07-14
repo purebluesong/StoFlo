@@ -103,7 +103,7 @@ class GameActivity : Activity() {
 
     private fun addNextChapterButtonTo(chapter: AVObject, buttonContainer: LinearLayout): Button {
         val button = Button(this)
-        button.text = chapter.getString(getString(R.string.info_table_chapter_name))
+        button.text = chapter.getString(getString(R.string.info_table_chapter_title))
         button.gravity = Gravity.CENTER
         button.setSingleLine()
         button.setBackgroundColor(Color.CYAN)

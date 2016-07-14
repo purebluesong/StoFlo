@@ -9,7 +9,6 @@ import com.avos.avoscloud.AVObject;
 import com.sprout.wi.stoflo.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -31,7 +30,7 @@ public class ChooseChapterDialogFragment extends DialogFragment{
         List<String> options = new ArrayList<>();
         options.add(getString(R.string.info_new_chapter));
         for (AVObject chapter: chapters) {
-            options.add(chapter.getString(getString(R.string.info_table_chapter_name)));
+            options.add(chapter.getString(getString(R.string.info_table_chapter_title)));
         }
         mCSL = csl;
         String[] tmp = {};

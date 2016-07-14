@@ -15,7 +15,6 @@ import android.os.Message
 import android.view.LayoutInflater
 import android.widget.*
 import com.avos.avoscloud.AVFile
-import com.avos.avoscloud.AVRelation
 import com.sprout.wi.stoflo.Global
 import java.util.*
 
@@ -49,6 +48,8 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
 
     init {
         context = createStoryActivity
+        val inflater = context?.layoutInflater
+        rootView = inflater?.inflate(R.layout.create_story_list) as LinearLayout?
     }
 
     private fun getString(resid: Int): String? {
@@ -68,8 +69,6 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
     }
 
     override fun iniView() {
-        val inflater = context?.layoutInflater
-        rootView = inflater?.inflate(R.layout.create_story_list) as LinearLayout?
         val newGameButton :Button = findView(R.id.create_new_game) as Button
         newGameButton.setOnClickListener { newGameOnClick() }
         gameListView = findView(R.id.create_game_list_container) as LinearLayout?
@@ -158,6 +157,7 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
             game.put(getString(R.string.info_table_game_name), gameName)
             game.put(getString(R.string.info_table_game_description), description)
             game.saveInBackground()
+            addNewViewToGamesView(game)
             val user = AVUser.getCurrentUser()
             user.getRelation<AVObject>(getString(R.string.info_table_user_have_game)).add(game)
             user.saveInBackground()

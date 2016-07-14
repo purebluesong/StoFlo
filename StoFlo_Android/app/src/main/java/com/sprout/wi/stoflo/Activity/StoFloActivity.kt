@@ -88,7 +88,7 @@ class StoFloActivity : Activity() {
 
     private fun startGame(game: AVObject?) {
         if (game != null) {
-            jumpToGamePage(game.objectId, game.getAVObject<AVObject>(getString(R.string.info_table_start_chapter)).objectId)
+            jumpToGamePage(game.objectId, game.getAVObject<AVObject>(getString(R.string.info_table_game_start_chapter)).objectId)
         }
     }
 

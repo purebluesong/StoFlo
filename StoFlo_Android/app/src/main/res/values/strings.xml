@@ -51,7 +51,7 @@
     <string name="success_create_game">创建游戏成功</string>
     <string name="error_create_game_failed">游戏创建失败，请检查游戏名是否为空</string>
     <string name="info_chapter_start_name">start</string>
-    <string name="info_table_chapter_name">title</string>
+    <string name="info_table_chapter_title">title</string>
     <string name="info_table_chapter_content">content</string>
     <string name="info_table_chapter_background">background</string>
     <string name="info_table_owner_game">owner_game</string>
@@ -63,7 +63,7 @@
     <string name="error_create_empty_chapter_failed">创建新章节失败</string>
     <string name="error_query_failed">获取章节列表失败</string>
     <string name="error_require_gamelist_failed">游戏列表获取失败，请检查网络连接</string>
-    <string name="info_table_start_chapter">start_chapter</string>
+    <string name="info_table_game_start_chapter">start_chapter</string>
     <string name="info_intent_game">game</string>
     <string name="info_intent_chapter">chapter</string>
     <string name="error_fetch_game_failed">拉取游戏数据失败，请检查网络连接</string>

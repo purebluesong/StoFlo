@@ -28,7 +28,7 @@ public class ChooseChapterMultipleFragment extends DialogFragment {
     public ChooseChapterMultipleFragment(List<AVObject> chapters,ChooseMultipleListener cml) {
         List<String> options = new ArrayList<>();
         for (AVObject chapter: chapters) {
-            options.add(chapter.getString(getString(R.string.info_table_chapter_name)));
+            options.add(chapter.getString(getString(R.string.info_table_chapter_title)));
         }
         mCML = cml;
         String[] tmp = {};
