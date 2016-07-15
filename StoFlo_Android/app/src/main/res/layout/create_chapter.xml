@@ -90,29 +90,41 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
     >
-        <Button
+        <com.andexert.library.RippleView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/info_return"
-                android:id="@+id/create_chapter_return"
-                style="@style/Widget.AppCompat.Button.Small"
-        />
-
-        <Button
+        >
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/info_return"
+                    android:id="@+id/create_chapter_return"
+            />
+        </com.andexert.library.RippleView>
+        <com.andexert.library.RippleView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+        >
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/info_save"
+                    android:id="@+id/create_save"
+            />
+        </com.andexert.library.RippleView>
+        <com.andexert.library.RippleView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/info_save"
-                android:id="@+id/create_save"
-        />
-
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/info_save_next"
-                android:id="@+id/create_save_next"
-        />
+        >
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/info_save_next"
+                    android:id="@+id/create_save_next"
+            />
+        </com.andexert.library.RippleView>
     </LinearLayout>
 </LinearLayout>
