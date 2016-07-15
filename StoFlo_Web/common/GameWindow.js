@@ -2,14 +2,18 @@ import React from 'react'
 
 const styles = {
     container: {
+        width: '98%',
+        height: '98%',
         position: 'relative'
     },
     textBox: {
         position: 'absolute',
-        zIndex: '10'
+        zIndex: '10',
+        whiteSpace: 'pre'
     },
     actionDialog: {
-
+        position: 'absolute',
+        zIndex: '15'
     }
 }
 
@@ -32,7 +36,7 @@ export default class GameWindow extends React.Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if (nextProps.chapter == this.props.chapter) return // console.warn("not update")
+        //if (nextProps.chapter == this.props.chapter) return // console.warn("not update")
         const content   = nextProps.chapter.get('content')
         const variables = nextProps.variables
         this.setState({
@@ -42,7 +46,7 @@ export default class GameWindow extends React.Component {
     }
 
     parseContent = (content, variables) => {
-        const segments = content.split(/(?:{{)|(?:}})/)
+        const segments = (content||'').split(/(?:{{)|(?:}})/)
         const sections = [[]]
         let isCode = false
         for (let segment of segments) {
@@ -60,16 +64,18 @@ export default class GameWindow extends React.Component {
         return sections.map(x=>x.join(''))
     }
 
-    render = () => (
-        <div style={styles.container} ref="container">{
-            this.state.step >= this.state.sections.length ? (
+    render = () => {
+        const finished = this.state.step >= this.state.sections.length
+        return (
+            <div style={styles.container} ref="container">
+                <img src={this.props.chapter.get('background')||'http://'} />
                 <div style={styles.textBox}>
-                    {this.state.sections[this.state.step]}
+                    { !finished ? this.state.sections[this.state.step] : this.state.sections[this.state.sections.length-1] }
                 </div>
-            ) : (
-                <div style={styles.actionDialog}>
+                <div style={styles.actionDialog} hidden={!finished}>
+
                 </div>
-            )
-        }</div>
-    )
+            </div>
+        )
+    }
 }

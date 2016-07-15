@@ -272,7 +272,7 @@ export default class BranchOptionEditor extends React.Component {
                             primary={true}
                             onTouchTap={()=>{
                                 this.setState({ editing: null })
-                                this.props.setLastFocus(()=>{})
+                                this.props.setLastFocus(null)
                                 this.state.ast.saveAsActions(()=>{})
                             }}
                         />
