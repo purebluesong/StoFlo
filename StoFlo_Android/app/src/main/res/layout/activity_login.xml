@@ -110,26 +110,36 @@
                 />
             </LinearLayout>
 
+            <com.andexert.library.RippleView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <Button
+                        android:id="@+id/email_sign_in_button"
+                        style="?android:textAppearanceSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/action_sign_in"
+                        android:textStyle="bold"
+                        android:alpha="0.7"
+                />
+            </com.andexert.library.RippleView>
 
-            <Button
-                    android:id="@+id/email_sign_in_button"
-                    style="?android:textAppearanceSmall"
+            <com.andexert.library.RippleView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/action_sign_in"
-                    android:textStyle="bold" android:alpha="0.7"/>
+            >
+                <Button
+                        android:layout_width="match_parent"
+                        style="?android:textAppearanceSmall"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_sign_up"
+                        android:layout_marginTop="16dp"
+                        android:textStyle="bold"
+                        android:id="@+id/email_sing_up_button"
+                        android:alpha="0.7"/>
 
-            <Button
-                    android:layout_width="match_parent"
-                    style="?android:textAppearanceSmall"
-                    android:layout_height="wrap_content"
-                    android:text="@string/action_sign_up"
-                    android:layout_marginTop="16dp"
-                    android:textStyle="bold"
-                    android:id="@+id/email_sing_up_button"
-                    android:alpha="0.7"/>
-
+            </com.andexert.library.RippleView>
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

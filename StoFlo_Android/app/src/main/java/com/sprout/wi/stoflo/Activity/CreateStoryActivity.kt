@@ -25,8 +25,6 @@ class CreateStoryActivity : Activity(){
     var isActionEdit = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AVOSCloud.initialize(this, "L0j4qz7SOIcy99SP8ykDNoCl-gzGzoHsz", "ui7WUKdwtwvbXBgxic0fnwVd")
-
         if (AVUser.getCurrentUser() == null) {
             jumpTo(LoginActivity::class.java)
         }

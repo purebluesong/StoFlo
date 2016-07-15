@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import android.view.View
 import android.widget.*
 import cn.finalteam.galleryfinal.GalleryFinal
@@ -67,12 +68,13 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
                 chapterTableName = getString(R.string.info_game_prefix) + context.mGame?.objectId
                 mChapter = newChapter()
                 chapterTableQuery = AVQuery<AVObject>(chapterTableName)
-                context.mGame!!.put(getString(R.string.info_table_game_start_chapter), mChapter)
-                context.mGame!!.saveInBackground()
+                context.mGame?.put(getString(R.string.info_table_game_chapter_table_name), chapterTableName)
+                context.mGame?.put(getString(R.string.info_table_game_start_chapter), mChapter as AVObject)
+                context.mGame?.saveInBackground()
             } else {
                 chapterTableName = name
                 chapterTableQuery = AVQuery<AVObject>(chapterTableName)
-                mChapter = chapterTableQuery!!.first
+                mChapter = chapterTableQuery?.first
             }
         }
     }
@@ -87,7 +89,9 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     private fun fillChapterList() {
         Thread(Runnable {
             chapterList = chapterTableQuery?.find() as ArrayList<AVObject>
+            Log.d("Sprout", chapterList.size.toString())
             handler.sendMessage(handler.obtainMessage(0, Runnable {
+                mChapterListView.removeAllViews()
                 for (chapter in chapterList) {
                     val chapterView = context.layoutInflater?.inflate(R.layout.edit_chapter_shortcut_template)as TextView
                     val title = chapter.getString(getString(R.string.info_table_chapter_title))
@@ -171,7 +175,9 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
             override fun onHanlderSuccess(reqeustCode: Int, resultList: List<PhotoInfo>) {
                 val path = resultList[0].photoPath
                 mBackground = Drawable.createFromPath(path)
-                mChapterContentEdit.background = mBackground
+                if (mBackground != null){
+                    mChapterContentEdit.background = mBackground
+                }
             }
 
             override fun onHanlderFailure(requestCode: Int, errorMsg: String) {

@@ -27,6 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|right"
+                android:gravity="center"
                 android:layout_weight="1"
         >
                 <EditText
@@ -65,22 +66,35 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_gravity="bottom">
-            <Button
+            <com.andexert.library.RippleView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                        android:layout_weight="1"
+                        android:text="@string/create_new_game"
+                        android:id="@+id/myself_game"
+                        android:layout_gravity="bottom"
+                />
+            </com.andexert.library.RippleView>
+
+            <com.andexert.library.RippleView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_weight="1"
-                    android:text="@string/create_new_game"
-                    android:id="@+id/myself_game"
-                    android:layout_gravity="bottom"/>
-            <Button
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/info_continue_last"
-                    android:id="@+id/continue_last_button"
-                    android:layout_gravity="center"/>
+            >
+                <Button
+                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/info_continue_last"
+                        android:id="@+id/continue_last_button"
+                        android:layout_gravity="center"
+                />
+            </com.andexert.library.RippleView>
+
     </LinearLayout>
 
 
