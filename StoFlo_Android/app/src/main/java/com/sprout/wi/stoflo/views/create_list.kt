@@ -1,13 +1,12 @@
 package com.sprout.wi.stoflo.views
 
-import android.app.DialogFragment
+import android.app.AlertDialog
 import android.view.View
 import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.AVUser
 import com.sprout.wi.stoflo.Activity.CreateStoryActivity
 import com.sprout.wi.stoflo.Activity.createInter
 import com.sprout.wi.stoflo.R
-import com.sprout.wi.stoflo.fragment.CreateGameDialogFragment
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
 import android.os.Handler
@@ -20,14 +19,14 @@ import java.util.*
 
 
 /**
- * Created by sprout on 16-7-13.
+ * Created by sprout on 16-7-13
  */
-class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFragment.CreateGameListener,createInter {
+class CreateList(createStoryActivity: CreateStoryActivity) : createInter {
 
-    var rootView : LinearLayout? = null
-    var context : CreateStoryActivity? = null
+    var context : CreateStoryActivity = createStoryActivity
+    var rootView : LinearLayout = context.layoutInflater.inflate(R.layout.create_story_list) as LinearLayout
     var gamelist : List<AVObject> = ArrayList()
-    var gameListView : LinearLayout? = null
+    var gameListView : LinearLayout = rootView.findViewById(R.id.create_game_list_container) as LinearLayout
     var imageViewQueue: List<ImageView> = ArrayList()
     var coverQueue: List<AVFile> = ArrayList()
     private val imageFillCount: Int = 0
@@ -46,22 +45,16 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
         }
     }
 
-    init {
-        context = createStoryActivity
-        val inflater = context?.layoutInflater
-        rootView = inflater?.inflate(R.layout.create_story_list) as LinearLayout?
+    private fun getString(resID: Int): String? {
+        return context.getString(resID)
     }
 
-    private fun getString(resid: Int): String? {
-        return context?.getString(resid)
-    }
-
-    private fun findView(resid : Int): View? {
-        return context?.find(resid)
+    private fun findView(resID: Int): View? {
+        return context.find(resID)
     }
 
     override fun haveFlag(): Boolean {
-        return context?.mGame == null
+        return context.mGame == null
     }
 
     override fun iniData() {
@@ -71,18 +64,18 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
     override fun iniView() {
         val newGameButton :Button = findView(R.id.create_new_game) as Button
         newGameButton.setOnClickListener { newGameOnClick() }
-        gameListView = findView(R.id.create_game_list_container) as LinearLayout?
         Thread(Runnable {
             val games = AVUser.getCurrentUser().getRelation<AVObject>(getString(R.string.info_table_user_have_game))
             gamelist = games.query.find()
             handler.sendMessage(handler.obtainMessage(MSG_METHOD, Runnable {
+                gameListView.removeAllViews()
                 for (game in gamelist) {
                     addNewViewToGamesView(game)
                 }
                 initOver = true
             }))
         }).start()
-        fillCover(gameListView?.childCount as Int)
+        fillCover(gameListView.childCount)
     }
 
 
@@ -102,7 +95,7 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
     }
 
     private fun addNewViewToGamesView(game: AVObject) {
-        val inflator = context?.layoutInflater
+        val inflator = context.layoutInflater
         val templateView :LinearLayout = inflator?.inflate(R.layout.game_shortcut) as LinearLayout
         val cover :ImageView = templateView.findViewById(R.id.game_cover) as ImageView
         imageViewQueue + cover
@@ -111,18 +104,50 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
         val descriptionView :TextView = templateView.findViewById(R.id.game_description) as TextView
         titleView.text = game.getString(getString(R.string.info_table_game_name))
         descriptionView.text = game.getString(getString(R.string.info_table_game_description))
-        templateView.setOnClickListener { view -> editGame(gameListView?.indexOfChild(view)) }
-        gameListView?.addView(templateView)
+        templateView.setOnClickListener { view -> editGame(gameListView.indexOfChild(view)) }
+        gameListView.addView(templateView)
     }
 
     private fun editGame(indexOfChild: Int?) {
-        context?.mGame = gamelist[indexOfChild as Int]
-        context?.reLoadView()
+        context.mGame = gamelist[indexOfChild as Int]
+        context.reLoadView()
     }
 
     private fun newGameOnClick() {
-        val dialog = CreateGameDialogFragment()
-        dialog.show(context?.fragmentManager, "CreateGameDialogFragment")
+        val builder:AlertDialog.Builder = AlertDialog.Builder(context)
+        val dialogView:View = context.layoutInflater.inflate(R.layout.custom_create_game,null)
+        builder.setView(dialogView)
+                .setTitle(R.string.create_new_game)
+                .setPositiveButton(R.string.info_confirm) { dialog, which ->
+                    val nameEdit = dialogView.findViewById(R.id.create_game_name) as EditText
+                    val gameName = nameEdit.text.toString()
+                    val description = (dialogView.findViewById(R.id.create_game_description) as EditText).text.toString()
+                    var cancel = false
+
+                    if (gameName.length == 0) {
+                        nameEdit.error = getString(R.string.error_invalid_game_name)
+                        cancel = true
+                    }
+
+                    if (!cancel) {
+                        val game = AVObject(getString(R.string.info_table_game))
+                        game.put(getString(R.string.info_table_game_name), gameName)
+                        game.put(getString(R.string.info_table_game_description), description)
+                        game.saveInBackground()
+                        gamelist + game
+                        addNewViewToGamesView(game)
+                        val user = AVUser.getCurrentUser()
+                        user.getRelation<AVObject>(getString(R.string.info_table_user_have_game)).add(game)
+                        user.saveInBackground()
+                    } else {
+                        context.toast(R.string.error_create_game_failed)
+                    }
+                    dialog.dismiss() }
+                .setNegativeButton(R.string.info_cancel) { dialog, which ->
+                    dialog.cancel()
+                }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     override fun getRootView(): View? {
@@ -141,30 +166,6 @@ class CreateList(createStoryActivity: CreateStoryActivity) : CreateGameDialogFra
     override fun onStart() {
     }
 
-    override fun onDialogPositiveClick(dialog: DialogFragment?) {
-        val nameEdit = (dialog as CreateGameDialogFragment).findViewById(R.id.create_game_name) as EditText
-        val gameName = nameEdit.text.toString()
-        val description = (dialog.findViewById(R.id.create_game_description) as EditText).text.toString()
-        var cancel = false
-
-        if (gameName.length == 0) {
-            nameEdit.error = getString(R.string.error_invalid_game_name)
-            cancel = true
-        }
-
-        if (!cancel) {
-            val game = AVObject(getString(R.string.info_table_game))
-            game.put(getString(R.string.info_table_game_name), gameName)
-            game.put(getString(R.string.info_table_game_description), description)
-            game.saveInBackground()
-            addNewViewToGamesView(game)
-            val user = AVUser.getCurrentUser()
-            user.getRelation<AVObject>(getString(R.string.info_table_user_have_game)).add(game)
-            user.saveInBackground()
-        } else {
-            context?.toast(R.string.error_create_game_failed)
-        }
-    }
 }
 
 fun LayoutInflater.inflate(resID: Int): Any {

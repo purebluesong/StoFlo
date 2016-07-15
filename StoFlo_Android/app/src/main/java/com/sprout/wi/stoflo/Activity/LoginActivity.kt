@@ -45,16 +45,15 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     private var mErrorTextView: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         AVOSCloud.initialize(this, APP_ID, APP_KEY)
         AVAnalytics.trackAppOpened(intent)
         if (AVUser.getCurrentUser() != null) {
             jumpToMainPage()
             return
         }
-        super.onCreate(savedInstanceState)
         setContentView(com.sprout.wi.stoflo.R.layout.activity_login)
         mEmailView = findViewById(R.id.email) as AutoCompleteTextView?
-        populateAutoComplete()
         mPasswordView = findViewById(R.id.password) as EditText?
         mPasswordView!!.setOnEditorActionListener(TextView.OnEditorActionListener { textView, id, keyEvent ->
             if (id == R.id.login || id == EditorInfo.IME_NULL) {
@@ -79,7 +78,6 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         if (!mayRequestContacts()) {
             return
         }
-
         loaderManager.initLoader(0, null, this)
     }
 

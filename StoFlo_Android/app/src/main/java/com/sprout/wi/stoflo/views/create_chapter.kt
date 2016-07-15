@@ -21,30 +21,27 @@ import org.jetbrains.anko.toast
 import java.util.*
 
 /**
- * Created by sprout on 16-7-13.
+ * Created by sprout on 16-7-13
  */
 class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
-    private var mChapterContentEdit: EditText? = null
-    private var mChapterContentBackground: Button? = null
-    private var mChapterContentText: Button? = null
-    private var mSave: Button? = null
-    private var mReturn: Button? = null
-    private var mSaveNext: Button? = null
+    private val context: CreateStoryActivity = createStoryActivity
+    private val rootView :LinearLayout = context.layoutInflater.inflate(R.layout.create_chapter) as LinearLayout
+
+    private val mSave: Button = rootView.findViewById(R.id.create_save) as Button
+    private val mReturn: Button = rootView.findViewById(R.id.create_chapter_return) as Button
+    private val mSaveNext: Button = rootView.findViewById(R.id.create_save_next) as Button
+    private val mChapterTitle: Button = rootView.findViewById(R.id.edit_chapter_title) as Button
+    private val mChapterAction: Button = rootView.findViewById(R.id.edit_chapter_action) as Button
+    private val mChapterListView: LinearLayout = rootView.findViewById(R.id.edit_chapters_container) as LinearLayout
+    private val mChapterContentText: Button = rootView.findViewById(R.id.edit_chapter_content_text) as Button
+    private val mChapterContentEdit: EditText = rootView.findViewById(R.id.edit_chapter_content) as EditText
+    private val mChapterContentBackground: Button = rootView.findViewById(R.id.edit_function_chapter_background) as Button
+
     private var mChapter: AVObject? = null
     private var mBackground: Drawable? = null
-    private var context: CreateStoryActivity = createStoryActivity
     private var chapterTableName = ""
     private var chapterTableQuery: AVQuery<AVObject>? = null
     private var chapterList = ArrayList<AVObject>()
-    private var rootView :LinearLayout? = null
-    private var mChapterAction: Button? = null
-    private var mChapterTitle: Button? = null
-    private var mChapterListView: LinearLayout? = null
-
-    init {
-        context = createStoryActivity
-        rootView = context.layoutInflater?.inflate(R.layout.create_chapter) as LinearLayout?
-    }
 
     internal val handler: Handler = object : Handler(){
         override fun handleMessage(msg: Message?) {
@@ -65,32 +62,25 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         if (context.mGame == null) {
             context.reLoadView()
         } else {
-            chapterTableName = context.mGame!!.getString(getString(R.string.info_table_game_chapter_table_name))
-            chapterTableQuery = AVQuery<AVObject>(chapterTableName)
-            mChapter = chapterTableQuery!!.first
-            if (mChapter == null) {
+            val name = (context.mGame as AVObject).getString(getString(R.string.info_table_game_chapter_table_name))
+            if (name == null){
+                chapterTableName = getString(R.string.info_game_prefix) + context.mGame?.objectId
                 mChapter = newChapter()
-                (context.mGame as AVObject).put(getString(R.string.info_table_game_start_chapter),mChapter)
-                (context.mGame as AVObject).saveInBackground()
+                chapterTableQuery = AVQuery<AVObject>(chapterTableName)
+                context.mGame!!.put(getString(R.string.info_table_game_start_chapter), mChapter)
+                context.mGame!!.saveInBackground()
+            } else {
+                chapterTableName = name
+                chapterTableQuery = AVQuery<AVObject>(chapterTableName)
+                mChapter = chapterTableQuery!!.first
             }
         }
     }
 
 
     override fun iniView() {
-        mChapterContentEdit = findViewById(R.id.edit_chapter_content) as EditText
-        mChapterContentBackground = findViewById(R.id.edit_function_chapter_background) as Button
-        mChapterContentText = findViewById(R.id.edit_chapter_content_text) as Button
-        mChapterAction = findViewById(R.id.edit_chapter_action) as Button
-        mChapterTitle = findViewById(R.id.edit_chapter_title) as Button
-        mChapterListView = findViewById(R.id.edit_chapters_container) as LinearLayout
-
-        mSave = findViewById(R.id.create_save) as Button
-        mSaveNext = findViewById(R.id.create_save_next) as Button
-        mReturn = findViewById(R.id.create_cancel) as Button
-
         fillChapterList()
-        edit(mChapter as AVObject)
+//        edit(mChapter as AVObject)
         registerOCL()
     }
 
@@ -106,8 +96,8 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
                     } else {
                         chapterView.text = chapter.getString(getString(R.string.info_table_chapter_content))
                     }
-                    chapterView.setOnClickListener { view -> edit(chapterList[mChapterListView?.indexOfChild(view) as Int]) }
-                    mChapterListView?.addView(chapterView)
+                    chapterView.setOnClickListener { view -> edit(chapterList[mChapterListView.indexOfChild(view)]) }
+                    mChapterListView.addView(chapterView)
                 }
             }))
         }).start()
@@ -116,18 +106,18 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     private fun edit(chapter: AVObject) {
         mChapter = chapter
         val content = chapter.getString(getString(R.string.info_table_chapter_content))
-        mChapterContentEdit?.setText(content)
+        mChapterContentEdit.setText(content)
         Thread(Runnable {
             val background = (mChapter as AVObject).getAVFile<AVFile>(getString(R.string.info_table_chapter_background)).data
             mBackground = Global.bitmap2Drawable(Global.Bytes2Bimap(background) as Bitmap, context.resources as Resources)
             handler.sendMessage(handler.obtainMessage(0, Runnable {
-                mChapterContentEdit?.background = mBackground
+                mChapterContentEdit.background = mBackground
             }))
         }).start()
     }
 
     override fun getRootView(): View {
-        return rootView!!
+        return rootView
     }
 
     override fun haveFlag(): Boolean {
@@ -147,36 +137,32 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
     }
 
     private fun registerOCL() {
-        mSave!!.setOnClickListener { attemptSave() }
-        mReturn!!.setOnClickListener { returnListPage() }
-        mSaveNext!!.setOnClickListener {
+        mSave.setOnClickListener { attemptSave() }
+        mReturn.setOnClickListener { returnListPage() }
+        mSaveNext.setOnClickListener {
             attemptSave()
             val chapter  = newChapter()
             if (chapter!= null){
                 edit(chapter)
             }
         }
-        mChapterContentBackground!!.setOnClickListener { setChapterBackground() }
-        mChapterContentText?.setOnClickListener { }
-        mChapterAction?.setOnClickListener {
+        mChapterContentBackground.setOnClickListener { setChapterBackground() }
+        mChapterContentText.setOnClickListener { }
+        mChapterAction.setOnClickListener {
             context.isActionEdit = true
             context.reLoadView()
         }
-        mChapterTitle?.setOnClickListener {  }
+        mChapterTitle.setOnClickListener {  }
     }
 
     private fun newChapter(): AVObject? {
         try {
-            return saveChapter(
-                    chapterTableName,
-                    getString(R.string.info_new_chapter) as String,
-                    "", null, null)
+            return saveChapter(chapterTableName, getString(R.string.info_new_chapter) as String, "")
         } catch (e: AVException) {
             e.printStackTrace()
             context.toast(R.string.error_create_empty_chapter_failed)
-            return null
         }
-
+        return null
     }
 
     private fun setChapterBackground() {
@@ -185,7 +171,7 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
             override fun onHanlderSuccess(reqeustCode: Int, resultList: List<PhotoInfo>) {
                 val path = resultList[0].photoPath
                 mBackground = Drawable.createFromPath(path)
-                mChapterContentEdit!!.background = mBackground
+                mChapterContentEdit.background = mBackground
             }
 
             override fun onHanlderFailure(requestCode: Int, errorMsg: String) {
@@ -225,22 +211,22 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
 
     @Throws(AVException::class)
     private fun saveChapterInstance(): AVObject {
-        val content = mChapterContentEdit!!.text.toString()
+        val content = mChapterContentEdit.text.toString()
         val pic = Global.Bitmap2Bytes((mBackground as BitmapDrawable).bitmap)
-        return saveChapter(chapterTableName, "", content, pic, null)
+        return saveChapter(chapterTableName, "", content, pic)
     }
 
     private val isInvalidateChapterContent: Boolean
         get() {
-            val success = mChapterContentEdit!!.text.length != 0
+            val success = mChapterContentEdit.text.length != 0
             if (!success) {
-                mChapterContentEdit!!.error = getString(R.string.error_invalid_chapter_content)
+                mChapterContentEdit.error = getString(R.string.error_invalid_chapter_content)
             }
             return success
         }
 
     @Throws(AVException::class)
-    private fun saveChapter(chapterTable: String, title: String, content: String, background: ByteArray?, callback: SaveCallback?, nextChapters: List<AVObject> = ArrayList()): AVObject {
+    private fun saveChapter(chapterTable: String, title: String, content: String, background: ByteArray? = null, callback: SaveCallback? = null, nextChapters: List<AVObject> = ArrayList()): AVObject {
         val chapter = AVObject(chapterTable)
         chapter.put(getString(R.string.info_table_chapter_title), title)
         chapter.put(getString(R.string.info_table_chapter_content), content)

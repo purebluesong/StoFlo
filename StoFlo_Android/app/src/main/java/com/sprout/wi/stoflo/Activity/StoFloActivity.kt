@@ -5,25 +5,22 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import cn.finalteam.galleryfinal.*
-import com.avos.avoscloud.AVException
-import com.avos.avoscloud.AVObject
-import com.avos.avoscloud.AVQuery
-import com.avos.avoscloud.AVUser
+import com.avos.avoscloud.*
 
 import com.sprout.wi.stoflo.component.GlideImageLoader
 import com.sprout.wi.stoflo.R
+import org.jetbrains.anko.toast
 import java.util.ArrayList
 
 /**
- * Created by purebluesong on 2016/6/21.
+ * Created by purebluesong on 2016/6/21
  */
 class StoFloActivity : Activity() {
     private var mUsernameView: EditText? = null
-    private var mCreateNewGameButton: Button? = null
+    private var mMyselfGameButton: Button? = null
     private var mContinueLastGameButton: Button? = null
     private var mLogoutButton: Button? = null
     private var mGameListView: ListView? = null
@@ -43,7 +40,7 @@ class StoFloActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.sprout.wi.stoflo.R.layout.activity_stoflo)
-
+        AVOSCloud.initialize(this, "L0j4qz7SOIcy99SP8ykDNoCl-gzGzoHsz", "ui7WUKdwtwvbXBgxic0fnwVd")
         initView()
         initComponent()
     }
@@ -59,7 +56,7 @@ class StoFloActivity : Activity() {
             try {
                 mGameList = query.find()
             } catch (e: AVException) {
-                Toast.makeText(applicationContext, getString(R.string.error_require_gamelist_failed), Toast.LENGTH_LONG)
+                toast(getString(R.string.error_require_gamelist_failed))
             }
 
             mHandler.sendMessage(mHandler.obtainMessage(FILL_VIEW_DATA))
@@ -112,12 +109,12 @@ class StoFloActivity : Activity() {
     private fun initView() {
         mUsernameView = findViewById(R.id.status_username) as EditText
         mUsernameView!!.setText(AVUser.getCurrentUser().username)
-        mCreateNewGameButton = findViewById(R.id.create_new_game) as Button
+        mMyselfGameButton = findViewById(R.id.myself_game) as Button
         mContinueLastGameButton = findViewById(R.id.continue_last_button) as Button
         mLogoutButton = findViewById(R.id.logout_button) as Button
         mGameListView = findViewById(R.id.GAME_LIST_VIEW) as ListView
 
-        mCreateNewGameButton!!.setOnClickListener { jumpToCreatePage() }
+        mMyselfGameButton!!.setOnClickListener { jumpToCreatePage() }
         mLogoutButton!!.setOnClickListener { logout() }
 
         mGameListView!!.choiceMode = ListView.CHOICE_MODE_SINGLE

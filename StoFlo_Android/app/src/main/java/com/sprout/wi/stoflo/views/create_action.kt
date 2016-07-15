@@ -70,5 +70,4 @@ class CreateAction(createStoryActivity: CreateStoryActivity) : createInter{
     override fun onDestory() {
     }
 
-
 }
