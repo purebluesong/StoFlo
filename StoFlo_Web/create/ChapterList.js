@@ -9,7 +9,7 @@ export default props => (
                 <ListItem
                     key={chapterId}
                     primaryText={props.chapters[chapterId].get('content').slice(0, 20) || "空白章节"}
-                    onTouchTap={() => props.onTouchTap(chapterId)}
+                    onTouchTap={() => props.onTouchTap(props.chapters[chapterId])}
                 />
             ))
         }</List>
@@ -17,6 +17,7 @@ export default props => (
             label="New Chapter"
             secondary={true}
             style={{ float: 'right', marginRight: '12px' }}
+            onTouchTap={props.onButtonClick}
         />
     </div>
 )

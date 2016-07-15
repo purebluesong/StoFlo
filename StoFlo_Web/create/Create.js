@@ -8,7 +8,8 @@ import FlatButton from 'material-ui/FlatButton'
 import Snackbar from 'material-ui/Snackbar'
 import Login from '../common/Login'
 import GameWindow from '../common/GameWindow'
-import {AVModel} from '../common/model'
+import {alert} from '../common/util'
+import {AVModel, createChapter} from '../common/model'
 import GameChooser from './GameChooser'
 import ChapterList from './ChapterList'
 import VariableList from './VariableList'
@@ -32,10 +33,11 @@ export default class Create extends React.Component {
         chapters: {},
         actions: [],
         variables: {},
+        resources: [],
 
         chapter: new AVModel('Chapter'),
         options: [],
-        lastFocus: ()=>{},
+        lastFocus: null,
 
         modal: '',
         snack: ''
@@ -66,9 +68,13 @@ export default class Create extends React.Component {
                     this.setState({ actions: actions })
                 })
                 .catch(alert)
+        this.setState({
+            resources: JSON.parse(game.get('resources')||'[]')
+        })
     }
 
     onSelectChapter = (chapter) => {
+        this.state.chapters[chapter.getObjectId()] = chapter
         chapter.relation('actions').query().find().try(options => {
             this.setState({
                 chapter: chapter,
@@ -80,16 +86,12 @@ export default class Create extends React.Component {
 
     save = () => {
         this.state.chapter.save().catch(alert)
-        AV.Object.saveAll(this.state.actions).catch(alert)
+        AV.Object.saveAll(this.state.options).catch(alert)
         this.setState({ snack: '保存完毕' })
     }
 
     setLastFocus = (f) => {
         this.setState({ lastFocus: f })
-    }
-
-    callLastFocus = (arg) => {
-        this.state.lastFocus(arg)
     }
 
     render = () => (
@@ -102,7 +104,14 @@ export default class Create extends React.Component {
                         <ChapterList
                             chapters={this.state.chapters}
                             open={this.state.modal == 'add_chapter'}
-                            onTouchTap={this.callLastFocus}
+                            onTouchTap={chapter => {
+                                if (this.state.lastFocus) {
+                                    this.state.lastFocus(chapter.getObjectId())
+                                } else {
+                                    this.onSelectChapter(chapter)
+                                }
+                            }}
+                            onButtonClick={()=>this.state.game::createChapter(this.onSelectChapter)}
                         />
                     </Tab>
                     <Tab label="变量">
@@ -113,8 +122,18 @@ export default class Create extends React.Component {
                     </Tab>
                     <Tab label="图片">
                         <ResourceList
-                            resources={this.state.game.get('resources')}
+                            resources={this.state.resources}
                             open={this.state.modal == 'add_resource'}
+                            onTouchTap={file => {
+                                this.state.chapter.set('background', file.url)
+                                this.setState({ chapter: this.state.chapter })
+                            }}
+                            onButtonClick={file => {
+                                this.state.resources.push({id: file.id, name: file.get('name'), url: file.get('url')})
+                                this.state.game.set('resources', JSON.stringify(this.state.resources))
+                                this.state.game.save().catch(alert)
+                                this.setState({ resources: this.state.resources })
+                            }}
                         />
                     </Tab>
                 </Tabs>
