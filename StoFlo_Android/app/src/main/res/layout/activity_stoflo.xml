@@ -34,6 +34,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
+                        android:layout_gravity="center"
                         android:alpha="0.7"
                         android:id="@+id/status_username"
                         android:textColor="#ffffff"
@@ -61,14 +62,16 @@
                   android:id="@+id/GAME_LIST_VIEW" android:layout_gravity="center_horizontal"/>
     </LinearLayout>
     <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_gravity="bottom">
             <com.andexert.library.RippleView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+
+            >
                 <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

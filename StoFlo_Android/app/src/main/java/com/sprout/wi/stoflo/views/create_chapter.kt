@@ -63,14 +63,16 @@ class CreateChapter(createStoryActivity: CreateStoryActivity) :createInter {
         if (context.mGame == null) {
             context.reLoadView()
         } else {
-            val name = (context.mGame as AVObject).getString(getString(R.string.info_table_game_chapter_table_name))
+            val name = context.mGame?.getString(getString(R.string.info_table_game_chapter_table_name))
             if (name == null){
                 chapterTableName = getString(R.string.info_game_prefix) + context.mGame?.objectId
                 mChapter = newChapter()
                 chapterTableQuery = AVQuery<AVObject>(chapterTableName)
-                context.mGame?.put(getString(R.string.info_table_game_chapter_table_name), chapterTableName)
-                context.mGame?.put(getString(R.string.info_table_game_start_chapter), mChapter as AVObject)
-                context.mGame?.saveInBackground()
+                if (context.mGame != null) {
+                    context.mGame?.put(getString(R.string.info_table_game_chapter_table_name), chapterTableName)
+                    context.mGame?.put(getString(R.string.info_table_game_start_chapter), mChapter as AVObject)
+                    context.mGame?.saveInBackground()
+                }
             } else {
                 chapterTableName = name
                 chapterTableQuery = AVQuery<AVObject>(chapterTableName)
